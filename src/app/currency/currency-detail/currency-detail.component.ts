@@ -22,14 +22,12 @@ import { DatesService } from 'src/app/dates.service';
 })
 export class CurrencyDetailComponent implements OnInit {
   ActiveChart = ActiveChart;
-
   name!: string;
   code!: string;
   flagUrl!: string;
   detailCurrencyRates: CurrencyRate[] = [];
   activeChart: ActiveChart = ActiveChart.LastSevenDays;
-  emptyHeartIcon: IconDefinition = farHeart;
-  fullHeartIcon: IconDefinition = fasHeart;
+  heartIcon: IconDefinition = farHeart;
   isRateInFavourites: boolean = false;
   dates: string[] = [];
 
@@ -54,6 +52,7 @@ export class CurrencyDetailComponent implements OnInit {
     this.getCurrencyDetailsAndFlagUrl();
     this.isRateInFavourites =
       this.favouritesRatesService.checkIfRateIsInFavourites(this.code);
+    this.heartIcon = this.isRateInFavourites ? fasHeart : farHeart;
   }
 
   private getCurrencyDetailsAndFlagUrl(): void {
@@ -153,5 +152,17 @@ export class CurrencyDetailComponent implements OnInit {
   removeFromFavourites(code: string): void {
     this.favouritesRatesService.removeFromFavourites(code);
     this.isRateInFavourites = !this.isRateInFavourites;
+  }
+
+  heartIconClick(code: string): void {
+    if (this.isRateInFavourites) {
+      this.isRateInFavourites = false
+      this.favouritesRatesService.removeFromFavourites(code);
+      this.heartIcon = farHeart
+    } else {
+      this.isRateInFavourites = true
+      this.favouritesRatesService.addToFavourites(code);
+      this.heartIcon = fasHeart
+    }
   }
 }

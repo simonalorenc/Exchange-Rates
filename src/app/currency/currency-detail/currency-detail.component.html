@@ -6,15 +6,8 @@
           <div class="fs-1 d-flex name">{{ name }}</div>
           <fa-icon
             class="fa-2xl far-regular custom-color"
-            [icon]="emptyHeartIcon"
-            *ngIf="isRateInFavourites === false"
-            (click)="addToFavourites(code)"
-          ></fa-icon>
-          <fa-icon
-            class="fa-2xl far-regular custom-color"
-            [icon]="fullHeartIcon"
-            *ngIf="isRateInFavourites === true"
-            (click)="removeFromFavourites(code)"
+            [icon]="heartIcon"
+            (click)="heartIconClick(code)"
           ></fa-icon>
         </div>
         <div class="row">
@@ -44,7 +37,7 @@
         </div>
       </div>
       <div class="d-flex justify-content-center py-2">
-        <nav aria-label="Page navigation example">
+        <nav aria-label="Page navigation">
           <ul class="pagination cursor">
             <li class="page-item">
               <a
