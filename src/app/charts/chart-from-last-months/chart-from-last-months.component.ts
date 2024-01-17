@@ -41,7 +41,6 @@ export class ChartFromLastMonthsComponent {
     ).subscribe(grouped => {
       const labels: string[] = []
       const values: number[] = []
-      console.log(grouped)
       grouped.forEach(group => {
         const groupMonth = group[0] + 1
         labels.push(groupMonth.toString())

@@ -91,7 +91,6 @@ export class CurrencyDetailComponent implements OnInit {
     const startDateString = this.datesService.getFormattedDate(startDate);
 
     this.dates = [startDateString, endDateString];
-    console.log(this.dates)
     this.displayExchangeRates();
   }
 
