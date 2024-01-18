@@ -14,7 +14,7 @@ import { CurrencyExchangeTableDto } from './currency-exchange-table-dto';
   providedIn: 'root',
 })
 export class ExchangeRateService {
-  private BASE_URL: string = 'http://api.nbp.pl/api/exchangerates';
+  private BASE_URL: string = 'https://api.nbp.pl/api/exchangerates';
 
   private codeToTableMap: Map<string, string> = new Map<string, string>()
 

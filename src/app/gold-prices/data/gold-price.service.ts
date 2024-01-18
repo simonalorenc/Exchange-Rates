@@ -7,7 +7,7 @@ import { GoldPriceDto } from './gold-price-dto';
   providedIn: 'root'
 })
 export class GoldPriceService {
-  private BASE_URL: string = 'http://api.nbp.pl/api/cenyzlota'
+  private BASE_URL: string = 'https://api.nbp.pl/api/cenyzlota'
   private NUMBER_OF_LAST_DAYS: number = 14
 
   constructor(private http: HttpClient) { }
