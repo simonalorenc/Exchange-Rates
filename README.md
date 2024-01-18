@@ -21,21 +21,14 @@ Tech stack:
 
 ![Alt text](src/assets/screenshots/all.png)
 ![Alt text](src/assets/screenshots/detail_usd.png)
-<!-- ![Alt text](src/assets/screenshots/mobile_all.png)
-![Alt text](src/assets/screenshots/mobile_menu.png)
-![Alt text](src/assets/screenshots/mobile_detail.png) -->
+
 <p align="center">
     <img
   src="src/assets/screenshots/mobile_all.png"
   width="300px">
     <img
-  src="src/assets/screenshots/mobile_menu.png"
-  width="300px">    
-</p>
-<p align="center">
-    <img
   src="src/assets/screenshots/mobile_detail.png"
-  width="300px">
+  width="300px">    
 </p>
 
 ## To do
