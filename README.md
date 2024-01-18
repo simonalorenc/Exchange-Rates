@@ -27,19 +27,13 @@ Tech stack:
 
 <img
   src="src/assets/screenshots/mobile_all.png"
-  alt="Alt text"
-  title="Optional title"
-  style="display: inline-block; margin: 0 auto; max-width: 300px">
+  width="300px">
 <img
   src="src/assets/screenshots/mobile_menu.png"
-  alt="Alt text"
-  title="Optional title"
-  style="display: inline-block; margin: 0 auto; max-width: 300px">
+  width="300px">
 <img
   src="src/assets/screenshots/mobile_detail.png"
-  alt="Alt text"
-  title="Optional title"
-  style="display: inline-block; margin: 0 auto; max-width: 300px">
+  width="300px">
 
 ## To do
 
