@@ -19,7 +19,15 @@ Tech stack:
 
 ## Some screenshots:
 
-![Alt text](/assets/screenshots/all.png)
+![Alt text](src/assets/screenshots/all.png)
+![Alt text](src/assets/screenshots/gold_prices.png)
+![Alt text](src/assets/screenshots/sort_alpha.png)
+![Alt text](src/assets/screenshots/filter_input.png)
+![Alt text](src/assets/screenshots/detail_cad.png)
+![Alt text](src/assets/screenshots/detail_usd.png)
+![Alt text](src/assets/screenshots/mobile_all.png)
+![Alt text](src/assets/screenshots/mobile_menu.png)
+![Alt text](src/assets/screenshots/mobile_detail.png)
 
 ## To do
 
