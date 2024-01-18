@@ -11,7 +11,7 @@ Tech stack:
 - RxJS
 - Bootstrap
 - REST API
-- HTML, SASS
+- HTML, SCSS
 
 ## Live
 
