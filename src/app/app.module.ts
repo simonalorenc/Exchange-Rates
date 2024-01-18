@@ -19,6 +19,7 @@ import { ChartFromLastDaysComponent } from './charts/chart-from-last-days/chart-
 import { CurrencyListComponent } from './currency/currency-list/currency-list.component';
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,9 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     CollapseModule.forRoot(),
     FontAwesomeModule
   ],
-  providers: [],
+  providers: [
+    {provide : LocationStrategy , useClass: HashLocationStrategy}
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
