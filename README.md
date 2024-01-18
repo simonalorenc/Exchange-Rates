@@ -20,14 +20,26 @@ Tech stack:
 ## Some screenshots:
 
 ![Alt text](src/assets/screenshots/all.png)
-![Alt text](src/assets/screenshots/gold_prices.png)
-![Alt text](src/assets/screenshots/sort_alpha.png)
-![Alt text](src/assets/screenshots/filter_input.png)
-![Alt text](src/assets/screenshots/detail_cad.png)
 ![Alt text](src/assets/screenshots/detail_usd.png)
-![Alt text](src/assets/screenshots/mobile_all.png)
+<!-- ![Alt text](src/assets/screenshots/mobile_all.png)
 ![Alt text](src/assets/screenshots/mobile_menu.png)
-![Alt text](src/assets/screenshots/mobile_detail.png)
+![Alt text](src/assets/screenshots/mobile_detail.png) -->
+
+<img
+  src="src/assets/screenshots/mobile_all.png"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
+<img
+  src="src/assets/screenshots/mobile_menu.png"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
+<img
+  src="src/assets/screenshots/mobile_detail.png"
+  alt="Alt text"
+  title="Optional title"
+  style="display: inline-block; margin: 0 auto; max-width: 300px">
 
 ## To do
 
