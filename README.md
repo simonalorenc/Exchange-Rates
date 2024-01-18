@@ -24,16 +24,20 @@ Tech stack:
 <!-- ![Alt text](src/assets/screenshots/mobile_all.png)
 ![Alt text](src/assets/screenshots/mobile_menu.png)
 ![Alt text](src/assets/screenshots/mobile_detail.png) -->
-
-<img
+<div style="display: flex; justify-content: center; align-items: center">
+    <img
   src="src/assets/screenshots/mobile_all.png"
-  width="300px">
-<img
+  width="300px"
+  display="flex">
+    <img
   src="src/assets/screenshots/mobile_menu.png"
-  width="300px">
-<img
+  width="300px">    
+</div>
+<div style="display: flex; justify-content: center; align-items: center">
+    <img
   src="src/assets/screenshots/mobile_detail.png"
   width="300px">
+</div>
 
 ## To do
 
