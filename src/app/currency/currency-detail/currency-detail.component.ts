@@ -80,15 +80,17 @@ export class CurrencyDetailComponent implements OnInit {
 
   onPageChangePrevious() {
     this.currentPage = this.currentPage - 1;
-    this.getDates(this.currentPage)
+    this.dates = this.getDates(this.currentPage)
+    this.displayExchangeRates();
   }
 
   onPageChangeNext() {
     this.currentPage = this.currentPage + 1;
-    this.getDates(this.currentPage)
+    this.dates = this.getDates(this.currentPage)
+    this.displayExchangeRates();
   }
 
-  getDates(pageNumber: number) {
+  private getDates(pageNumber: number) {
     const endDate = new Date();
     endDate.setDate(endDate.getDate() - (pageNumber - 1) * this.NUMBER_ITEMS_ON_PAGE);
     const endDateString = this.datesService.getFormattedDate(endDate);
@@ -97,8 +99,7 @@ export class CurrencyDetailComponent implements OnInit {
     startDate.setDate(startDate.getDate() - pageNumber * this.NUMBER_ITEMS_ON_PAGE + 1);
     const startDateString = this.datesService.getFormattedDate(startDate);
 
-    this.dates = [startDateString, endDateString];
-    this.displayExchangeRates();
+    return [startDateString, endDateString];
   }
 
   changePageToFirst() {

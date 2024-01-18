@@ -12,6 +12,8 @@ export class GoldPricesComponent implements OnInit {
   goldPrices: GoldPrice[] = [];
   dates: string[] = [];
   currentPage: number = 1;
+  private NUMBER_ITEMS_ON_PAGE: number = 14
+
 
   constructor(private goldPriceService: GoldPriceService, private datesService: DatesService) {
   }
@@ -65,14 +67,13 @@ export class GoldPricesComponent implements OnInit {
     }
   }
 
-  getDates(pageNumber: number): string[] {
-    let x = 14
+  private getDates(pageNumber: number): string[] {
     const endDate = new Date()
-    endDate.setDate(endDate.getDate() - ((pageNumber - 1) * x + 1))
+    endDate.setDate(endDate.getDate() - ((pageNumber - 1) * this.NUMBER_ITEMS_ON_PAGE + 1))
     const endDateString = this.datesService.getFormattedDate(endDate)
 
     const startDate = new Date()
-    startDate.setDate(startDate.getDate() - (pageNumber * x))
+    startDate.setDate(startDate.getDate() - (pageNumber * this.NUMBER_ITEMS_ON_PAGE))
     const startDateString = this.datesService.getFormattedDate(startDate)
 
     return [startDateString, endDateString]
