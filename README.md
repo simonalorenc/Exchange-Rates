@@ -1,27 +1,17 @@
-# Currencies
+# Exchange Rates
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.1.
+See fluctuations in your currency using the tabel and charts below. Use fiter input to find Your currency!
 
-## Development server
+This repository contains the source code of a web application that allows tracking current currency exchange rates and gold prices. The application provides users with detailed information about each currency, presenting the latest rates in a table and generating a chart of rate fluctuations. Users can add favorite currencies, saving them locally. The result of the project is a functional and interactive application for monitoring financial exchange rates.
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Live
 
-## Code scaffolding
+.............
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Some screenshots:
 
-## Build
+.............
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+## To do
 
-## Running unit tests
-
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running end-to-end tests
-
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
-
-## Further help
-
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- add a currency calculator

@@ -10,17 +10,11 @@ export class NavbarRoutingService {
 
   constructor(private router: Router) {}
 
-  getCurrenciesActiveObservable(): Observable<boolean> {
-    return this.isCurrenciesActiveSubject.asObservable()
-  }
-
   onClickCurrencies(): void {
-    this.isCurrenciesActiveSubject.next(true);
     this.router.navigate(['/dashboard/currency-list']);
   }
 
   onClickGold(): void {
-    this.isCurrenciesActiveSubject.next(false);
     this.router.navigate(['/dashboard/gold-prices']);
   }
 }

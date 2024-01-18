@@ -31,6 +31,7 @@ export class CurrencyDetailComponent implements OnInit {
   isRateInFavourites: boolean = false;
   dates: string[] = [];
   currentPage: number = 1;
+  NUMBER_ITEMS_ON_PAGE: number = 6
 
   constructor(
     private route: ActivatedRoute,
@@ -56,24 +57,15 @@ export class CurrencyDetailComponent implements OnInit {
 
   private getCurrencyDetailsAndFlagUrl(): void {
     const countryCode = this.currenciesRepository.getCountryCode(this.code);
-    this.dates = this.datesService.getStartAndEndDate(6)
+    this.dates = this.datesService.getStartAndEndDate(this.NUMBER_ITEMS_ON_PAGE)
     this.flagUrl = this.flagsService.getFlagUrl(countryCode);
     this.displayExchangeRates()
   }
 
-  // private getCurrencyDetails(code: string): void {
-  //   this.dates = this.datesService.getStartAndEndDate(6)
-  //   this.exchangeRateService.getCurrencyExchangeTableDtoForDateRange(code, this.dates[0], this.dates[1])
-  //     .subscribe((result) => {
-  //       this.name = result.currency
-  //       this.displayExchangeRates()
-  //     })
-  // }
-
   displayExchangeRates() {
     this.exchangeRateService.getCurrencyExchangeTableDtoForDateRange(this.code, this.dates[0], this.dates[1]).subscribe((currencyResult) => {
-      this.name = currencyResult.currency
-      
+      this.name = this.currencyTranslationService.updateDetailCurrency(this.locale, currencyResult)
+      console.log(currencyResult)
       const allDates = this.getAllDatesInRange()
       const exchangeRatesMap = new Map<string, number>()
       currencyResult.rates.forEach(dto => {

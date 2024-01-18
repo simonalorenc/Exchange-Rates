@@ -27,12 +27,8 @@ export class NavbarComponent implements OnInit{
   constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller) {}
 
   ngOnInit(): void {
-    this.navbarRoutingService.getCurrenciesActiveObservable().subscribe(
-      (isActive) => {
-        this.isCurrenciesActive = isActive
-      }
-    )
-  }
+    
+   }
 
   toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed

@@ -22,10 +22,11 @@ export class CurrencyTranslationService {
   }
 
   //TODO: refactor to not update input parameter
-  updateDetailCurrency(locale: string, rate: CurrencyExchangeTableDto): void {
+  updateDetailCurrency(locale: string, rate: CurrencyExchangeTableDto): string {
     if(locale === 'en-US') {
       rate.currency = this.englishCurrencyNameJson[rate.code]
     }
+    return rate.currency
   }
 }
 

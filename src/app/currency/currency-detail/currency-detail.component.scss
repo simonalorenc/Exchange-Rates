@@ -22,6 +22,16 @@ h1 {
   font-weight: 600;
 }
 
+.active {
+  cursor: pointer;
+  font-weight: 600;
+  color: $text-primary; 
+}
+
+.page-link {
+  color: black;
+}
+
 @include media-breakpoint-down(sm) {
   .buttons {
     display: flex;

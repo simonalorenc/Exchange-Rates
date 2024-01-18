@@ -34,7 +34,6 @@ export class GoldPricesComponent implements OnInit {
           const goldPrice = new GoldPrice(dto);
           pricesMap.set(goldPrice.date, goldPrice.price);
         });
-
         this.goldPrices = allDates.reverse().map(date => ({
           date: date,
           price: pricesMap.get(date) !== undefined ? pricesMap.get(date)! : -1
