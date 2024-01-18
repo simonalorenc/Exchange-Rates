@@ -9,17 +9,16 @@
         aria-label="Search currency"
       />
       <div class="d-flex">
-        <app-button
-          [icon]="sortPopulrityIcon"
-          [isActive]="!isSortAlphabeticallyActive"
-          (click)="sortPopularity()"
-        ></app-button>
-        <div class="me-3"></div>
-        <app-button
-          [icon]="sortAlphabeticallyIcon"
-          [isActive]="isSortAlphabeticallyActive"
-          (click)="sortAlphabetically()"
-        ></app-button>
+        <div class="dropdown">
+          <app-button 
+            [icon]="sortAlphabeticallyIcon"
+            (click)="toggleCollapse()">
+          </app-button>
+          <ul class="dropdown-menu cursor" [collapse]="isCollapsed">
+            <li><div class="dropdown-item" (click)="sortAlphabetically()">Sort alphabetically</div></li>
+            <li><div class="dropdown-item" (click)="sortByFavourites()">Favourites first</div></li>
+          </ul>
+        </div>
       </div>
     </form>
     <div class="container">
@@ -52,12 +51,12 @@
               <div class="d-flex flex-column align-items-end">
                 <div class="fs-6 fw-medium">{{ currency.rate.mid }}</div>
                 <fa-icon  
-                  class="far-regular" 
+                  class="far-regular custom-color" 
                   *ngIf="currency.isAddedToFavourite === false"
                   [icon]="emptyHeartIcon" 
                   (click)="addToFavourite(currency.rate.code, $event)"></fa-icon>
                 <fa-icon  
-                  class="far-regular" 
+                  class="far-regular custom-color" 
                   *ngIf="currency.isAddedToFavourite === true"
                   [icon]="fullHeartIcon"
                   (click)="removeFromFavourite(currency.rate.code, $event)"

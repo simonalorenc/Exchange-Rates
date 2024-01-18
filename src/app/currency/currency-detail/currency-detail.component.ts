@@ -6,9 +6,14 @@ import { FlagsService } from '../data/flags.service';
 import { CurrenciesRepository } from '../data/currencies-repository';
 import { ActiveChart } from '../data/active-chart.enum';
 import { CurrencyTranslationService } from '../data/currency.translation.service';
-import { IconDefinition, faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
+import {
+  IconDefinition,
+  faHeart as farHeart,
+} from '@fortawesome/free-regular-svg-icons';
 import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
 import { FavouritesRatesService } from 'src/app/favourites-rates.service';
+import { ViewportScroller } from '@angular/common';
+import { DatesService } from 'src/app/dates.service';
 
 @Component({
   selector: 'app-currency-detail',
@@ -16,18 +21,17 @@ import { FavouritesRatesService } from 'src/app/favourites-rates.service';
   styleUrls: ['./currency-detail.component.scss'],
 })
 export class CurrencyDetailComponent implements OnInit {
-  private NUMBER_OF_LAST_DAYS: number = 7
-
-  ActiveChart = ActiveChart
-
-  name!: string
+  ActiveChart = ActiveChart;
+  name!: string;
   code!: string;
   flagUrl!: string;
   detailCurrencyRates: CurrencyRate[] = [];
   activeChart: ActiveChart = ActiveChart.LastSevenDays;
-  emptyHeartIcon: IconDefinition = farHeart;
-  fullHeartIcon: IconDefinition = fasHeart;
-  isRateInFavourites: boolean = false
+  heartIcon: IconDefinition = farHeart;
+  isRateInFavourites: boolean = false;
+  dates: string[] = [];
+  currentPage: number = 1;
+  private NUMBER_ITEMS_ON_PAGE: number = 7
 
   constructor(
     private route: ActivatedRoute,
@@ -37,56 +41,98 @@ export class CurrencyDetailComponent implements OnInit {
     private router: Router,
     @Inject(LOCALE_ID) public locale: string,
     private currencyTranslationService: CurrencyTranslationService,
-    private favouritesRatesService: FavouritesRatesService
+    private favouritesRatesService: FavouritesRatesService,
+    private viewportScroller: ViewportScroller,
+    private datesService: DatesService
   ) {
     this.code = this.route.snapshot.paramMap.get('code')!;
   }
 
   ngOnInit(): void {
     this.getCurrencyDetailsAndFlagUrl();
-    this.isRateInFavourites = this.favouritesRatesService.checkIfRateIsInFavourites(this.code)
+    this.isRateInFavourites =
+      this.favouritesRatesService.checkIfRateIsInFavourites(this.code);
+    this.heartIcon = this.isRateInFavourites ? fasHeart : farHeart;
   }
 
   private getCurrencyDetailsAndFlagUrl(): void {
     const countryCode = this.currenciesRepository.getCountryCode(this.code);
-    this.getCurrencyDetails(this.code);
+    this.dates = this.datesService.getStartAndEndDate(this.NUMBER_ITEMS_ON_PAGE)
     this.flagUrl = this.flagsService.getFlagUrl(countryCode);
+    this.displayExchangeRates()
   }
 
-  private getCurrencyDetails(code: string): void {
-    this.exchangeRateService
-      .getCurrencyExchangeTableDtoFromLastDays(code, this.NUMBER_OF_LAST_DAYS)
-      .subscribe((currency) => {
-        this.currencyTranslationService.updateDetailCurrency(this.locale, currency)
-        this.name = currency.currency
-        const currencyRatesDto = currency.rates.reverse();
-        this.detailCurrencyRates = currencyRatesDto.map(rate => new CurrencyRate(rate))
-      });
+  displayExchangeRates() {
+    this.exchangeRateService.getCurrencyExchangeTableDtoForDateRange(this.code, this.dates[0], this.dates[1]).subscribe((currencyResult) => {
+      this.name = this.currencyTranslationService.updateDetailCurrency(this.locale, currencyResult)
+      const allDates = this.datesService.getAllFormattedDatesBetweenRange(new Date(this.dates[0]), new Date(this.dates[1]))
+      const exchangeRatesMap = new Map<string, number>()
+      currencyResult.rates.forEach(dto => {
+        const currency = new CurrencyRate(dto)
+        exchangeRatesMap.set(currency.date, currency.mid)
+      })
+      this.detailCurrencyRates = allDates.reverse().map(date => ({
+        date: date,
+        mid: exchangeRatesMap.get(date) !== undefined ? exchangeRatesMap.get(date)! : -1
+      }))
+    })
+  }
+
+  onPageChangePrevious() {
+    this.currentPage = this.currentPage - 1;
+    this.getDates(this.currentPage)
+  }
+
+  onPageChangeNext() {
+    this.currentPage = this.currentPage + 1;
+    this.getDates(this.currentPage)
+  }
+
+  getDates(pageNumber: number) {
+    const endDate = new Date();
+    endDate.setDate(endDate.getDate() - (pageNumber - 1) * this.NUMBER_ITEMS_ON_PAGE);
+    const endDateString = this.datesService.getFormattedDate(endDate);
+
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - pageNumber * this.NUMBER_ITEMS_ON_PAGE + 1);
+    const startDateString = this.datesService.getFormattedDate(startDate);
+
+    this.dates = [startDateString, endDateString];
+    this.displayExchangeRates();
+  }
+
+  changePageToFirst() {
+    this.currentPage = 1
+    this.getCurrencyDetailsAndFlagUrl()
   }
 
   isChartFromLastSevenDaysActive(): void {
-    this.activeChart = ActiveChart.LastSevenDays
-    this.router.navigate([`detail/${this.code}/chart-from-last-seven-days`])
+    this.activeChart = ActiveChart.LastSevenDays;
+    this.router.navigate([`detail/${this.code}/chart-from-last-seven-days`]);
+    this.viewportScroller.scrollToAnchor('chartView');
   }
 
-  isChartFromLast30DaysActive(): void {
-    this.activeChart = ActiveChart.Last30Days
-    this.router.navigate([`detail/${this.code}/chart-from-last-30-days`])
+  isChartFromLastDaysActive(): void {
+    this.activeChart = ActiveChart.Last30Days;
+    this.router.navigate([`detail/${this.code}/chart-from-last-days`]);
+    this.viewportScroller.scrollToAnchor('chartView');
   }
 
   isChartFromLastMonthsActive(): void {
-    this.activeChart = ActiveChart.LastMonths
-    this.router.navigate([`detail/${this.code}/chart-from-last-months`])
+    this.activeChart = ActiveChart.LastMonths;
+    this.router.navigate([`detail/${this.code}/chart-from-last-months`]);
+    this.viewportScroller.scrollToAnchor('chartView');
   }
 
-  addToFavourites(code: string): void {
-    this.favouritesRatesService.addToFavourites(code)
-    this.isRateInFavourites = !this.isRateInFavourites
-  }
-
-  removeFromFavourites(code: string): void {
-    this.favouritesRatesService.removeFromFavourites(code)
-    this.isRateInFavourites = !this.isRateInFavourites
+  heartIconClick(code: string): void {
+    if (this.isRateInFavourites) {
+      this.isRateInFavourites = false
+      this.favouritesRatesService.removeFromFavourites(code);
+      this.heartIcon = farHeart
+    } else {
+      this.isRateInFavourites = true
+      this.favouritesRatesService.addToFavourites(code);
+      this.heartIcon = fasHeart
+    }
   }
 }
-

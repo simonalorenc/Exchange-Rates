@@ -16,7 +16,8 @@
     >
       <div class="navbar-nav text-center">
         <a
-          [class.active]="isCurrenciesActive"
+          routerLinkActive="active"
+          [routerLink]="['/dashboard/currency-list']"
           class="nav-link"
           aria-current="page"
           (click)="onClickCurrencies()"
@@ -24,7 +25,8 @@
           >Currencies</a
         >
         <a
-          [class.active]="!isCurrenciesActive"
+          routerLinkActive="active"
+          [routerLink]="['/dashboard/gold-prices']"
           class="nav-link"
           (click)="onClickGold()"
           i18n

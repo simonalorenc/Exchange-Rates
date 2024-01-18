@@ -5,8 +5,8 @@ import { GoldPricesComponent } from '../gold-prices/gold-prices.component';
 import { CurrencyDetailComponent } from '../currency/currency-detail/currency-detail.component';
 import { ChartFromLastSevenDaysComponent } from '../charts/chart-from-last-seven-days/chart-from-last-seven-days.component';
 import { ChartFromLastMonthsComponent } from '../charts/chart-from-last-months/chart-from-last-months.component';
-import { ChartFromLast30DaysComponent } from '../charts/chart-from-last-30-days/chart-from-last-30-days.component';
 import { CurrencyListComponent } from '../currency/currency-list/currency-list.component';
+import { ChartFromLastDaysComponent } from '../charts/chart-from-last-days/chart-from-last-days.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard/currency-list', pathMatch: 'full' },
@@ -21,7 +21,7 @@ const routes: Routes = [
     children: [
       { path: 'chart-from-last-seven-days', component: ChartFromLastSevenDaysComponent },
       { path: 'chart-from-last-months', component: ChartFromLastMonthsComponent },
-      { path: 'chart-from-last-30-days', component: ChartFromLast30DaysComponent },
+      { path: 'chart-from-last-days', component: ChartFromLastDaysComponent },
     ],
   },
 ];

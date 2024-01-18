@@ -11,14 +11,14 @@
           <app-button
             text="Currencies"
             i18n-text
-            [isActive]="isCurrenciesActive"
+            [routerLink]="['/dashboard/currency-list']"
             (click)="onClickCurrencies()"
           />
           <div class="me-4"></div>
           <app-button
             text="Gold"
             i18n-text
-            [isActive]="!isCurrenciesActive"
+            [routerLink]="['/dashboard/gold-prices']"
             (click)="onClickGold()"
           />
         </div>

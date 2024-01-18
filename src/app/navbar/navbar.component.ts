@@ -3,6 +3,7 @@ import { Component, HostListener, OnInit } from '@angular/core';
 import { IconDefinition, faBars } from '@fortawesome/free-solid-svg-icons';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
+import { ViewportScroller } from '@angular/common';
 
 @Component({
   selector: 'app-navbar',
@@ -23,15 +24,11 @@ export class NavbarComponent implements OnInit{
   isCollapsed = true;
   toggleIcon: IconDefinition = faBars;
 
-  constructor(private navbarRoutingService: NavbarRoutingService) {}
+  constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller) {}
 
   ngOnInit(): void {
-    this.navbarRoutingService.getCurrenciesActiveObservable().subscribe(
-      (isActive) => {
-        this.isCurrenciesActive = isActive
-      }
-    )
-  }
+    
+   }
 
   toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed
@@ -55,9 +52,11 @@ export class NavbarComponent implements OnInit{
 
   onClickCurrencies(): void {
     this.navbarRoutingService.onClickCurrencies()
+    this.viewportScroller.scrollToPosition([0,0])
   }
 
   onClickGold(): void {
     this.navbarRoutingService.onClickGold()
+    this.viewportScroller.scrollToPosition([0,0])
   }
 }

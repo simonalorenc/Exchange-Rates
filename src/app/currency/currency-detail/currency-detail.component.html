@@ -1,23 +1,14 @@
 <div class="pt-5">
   <div class="container pt-3">
     <div class="row pb-3">
-      <div class="col p-0">
-        <div class="row d-flex">
-          <div class="col-9">
-            <h1>{{ name }}</h1>
-          </div>
-          <div class="col d-flex align-items-center">
-            <fa-icon 
-              class="fa-2xl far-regular" 
-              [icon]="emptyHeartIcon"
-              *ngIf="isRateInFavourites === false"
-              (click)="addToFavourites(code)"></fa-icon>
-            <fa-icon 
-              class="fa-2xl far-regular" 
-              [icon]="fullHeartIcon"
-              *ngIf="isRateInFavourites === true"
-              (click)="removeFromFavourites(code)"></fa-icon>
-          </div>
+      <div class="col">
+        <div class="d-flex flex-row align-items-center">
+          <div class="fs-1 d-flex name">{{ name }}</div>
+          <fa-icon
+            class="fa-2xl far-regular custom-color"
+            [icon]="heartIcon"
+            (click)="heartIconClick(code)"
+          ></fa-icon>
         </div>
         <div class="row">
           <h1>{{ code }}</h1>
@@ -28,28 +19,64 @@
           [src]="flagUrl"
           onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
           i18n-alt
-          alt="Country flag"
-        />
+          alt="Country flag"/>
       </div>
     </div>
   </div>
   <section class="section-variant">
-    <div class="container pb-4">
-      <h2 class="py-3" i18n>Exchange rates from the last 7 days:</h2>
+    <div class="container">
+      <h2 class="py-3" i18n>Exchange rates from the last days:</h2>
       <div
         class="card mb-2"
-        *ngFor="let detailCurrency of detailCurrencyRates; let i = index"
-      >
+        *ngFor="
+          let detailCurrency of detailCurrencyRates">
         <div class="card-body d-flex align-items-center py-0">
-          <div class="fw-bold">{{ i + 1 }}</div>
+          <div class="fw-bold">•</div>
           <div class="mx-5 flex-fill">{{ detailCurrency.date }}</div>
-          <div>{{ detailCurrency.mid }}</div>
+          <div>{{ detailCurrency.mid !== -1 ? detailCurrency.mid : 'No data' }}</div>
         </div>
+      </div>
+      <div class="d-flex justify-content-center py-2">
+        <nav aria-label="Page navigation">
+          <ul class="pagination cursor">
+            <li class="page-item">
+              <a
+                class="page-link"
+                (click)="changePageToFirst()"
+                [class.disabled]="currentPage === 1"
+                aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a
+                class="page-link"
+                (click)="onPageChangePrevious()"
+                [class.disabled]="currentPage === 1"
+                aria-label="Previous">
+                <span aria-hidden="true">&lsaquo;</span>
+              </a>
+            </li>
+            <li class="page-item">
+              <a
+                class="page-link"
+                >{{ currentPage }}</a>
+            </li>
+            <li class="page-item">
+              <a
+                class="page-link"
+                (click)="onPageChangeNext()"
+                aria-label="Next">
+                <span aria-hidden="true">&rsaquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
       </div>
     </div>
   </section>
-  <div class="container pb-4">
-    <div class="d-flex justify-content-center pt-4">
+  <div class="container pb-4 pt-5" id="chartView">
+    <div class="d-flex justify-content-center pt-4 buttons">
       <app-button
         [isActive]="activeChart == ActiveChart.LastSevenDays"
         text="last 7 days"
@@ -61,7 +88,7 @@
         [isActive]="activeChart == ActiveChart.Last30Days"
         text="last 30 days"
         i18n-text
-        (click)="isChartFromLast30DaysActive()"
+        (click)="isChartFromLastDaysActive()"
       ></app-button>
       <div class="me-5"></div>
       <app-button

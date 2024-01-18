@@ -12,11 +12,7 @@ export class DashboardComponent implements OnInit {
   constructor(private navbarRoutingService: NavbarRoutingService) {}
 
   ngOnInit(): void {
-    this.navbarRoutingService.getCurrenciesActiveObservable().subscribe(
-      (isActive) => {
-        this.isCurrenciesActive = isActive
-      }
-    )
+  
   }
 
   onClickCurrencies(): void {

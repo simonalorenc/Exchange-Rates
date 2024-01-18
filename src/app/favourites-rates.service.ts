@@ -23,7 +23,7 @@ export class FavouritesRatesService {
 
   removeFromFavourites(code: string): void {
     let storedRates = this.getStoredRates()
-    storedRates = storedRates!.filter((el) => el !== code);
+    storedRates = storedRates.filter((el) => el !== code);
     localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(storedRates));
   }
 

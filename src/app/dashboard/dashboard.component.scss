@@ -1,0 +1,7 @@
+@import "../../variables.scss";
+
+.active {
+    cursor: pointer;
+    font-weight: 600;
+    color: $text-primary; 
+  }

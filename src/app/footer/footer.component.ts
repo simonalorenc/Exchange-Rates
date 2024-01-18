@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
+import { ViewportScroller } from '@angular/common';
 
 @Component({
   selector: 'app-footer',
@@ -8,9 +9,10 @@ import { NavbarRoutingService } from '../routing/navbar-routing.service';
 })
 export class FooterComponent {
 
-  constructor(private navbarRoutingService: NavbarRoutingService) {}
+  constructor(private navbarRoutingService: NavbarRoutingService, private viewPortScroller: ViewportScroller) {}
 
   onClickCurrencies(): void {
     this.navbarRoutingService.onClickCurrencies()
+    this.viewPortScroller.scrollToPosition([0, 0])
   }
 }

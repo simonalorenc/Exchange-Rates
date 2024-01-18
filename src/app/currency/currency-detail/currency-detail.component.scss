@@ -1,7 +1,42 @@
+@import '../../../variables.scss';
+@import "bootstrap/scss/bootstrap";
+
 .card-body {
   height: 50px;
 }
 
 section {
     min-height: auto;
+}
+
+img {
+  border: solid 2px $background-variant;
+  border-radius: 4px;
+}
+
+.name {
+  padding-right: 25px;
+}
+
+h1 {
+  font-weight: 600;
+}
+
+.active {
+  cursor: pointer;
+  font-weight: 600;
+  color: $text-primary; 
+}
+
+.page-link {
+  color: black;
+}
+
+@include media-breakpoint-down(sm) {
+  .buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
 }

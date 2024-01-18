@@ -7,6 +7,7 @@ import { IconDefinition, faArrowUpAZ, faSort, faHeart as fasHeart } from '@forta
 import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CurrencyTranslationService } from '../data/currency.translation.service';
 import { FavouritesRatesService } from 'src/app/favourites-rates.service';
+import { ViewportScroller } from '@angular/common';
 
 @Component({
   selector: 'app-currency-list',
@@ -22,12 +23,14 @@ export class CurrencyListComponent implements OnInit {
   sortPopulrityIcon: IconDefinition = faSort;
   emptyHeartIcon: IconDefinition = farHeart;
   fullHeartIcon: IconDefinition = fasHeart;
+  isCollapsed: boolean = true
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
     private formBuilder: FormBuilder,
     private router: Router,
     private currencyTranslationService: CurrencyTranslationService,
+    private viewPortScroller: ViewportScroller,
     private favouritesRatesService: FavouritesRatesService,
     @Inject(LOCALE_ID) public locale: string
   ) {
@@ -63,20 +66,27 @@ export class CurrencyListComponent implements OnInit {
     });
   }
 
+  toggleCollapse(): void {
+    this.isCollapsed = !this.isCollapsed
+  }
+
   sortAlphabetically(): void {
     this.isSortAlphabeticallyActive = true;
     this.filteredRatesWithFlag = this.ratesWithFlag.concat().sort((a, b) => {
       return a.rate.currency.localeCompare(b.rate.currency);
     });
+    this.toggleCollapse()
   }
 
-  sortPopularity(): void {
+  sortByFavourites(): void {
     this.isSortAlphabeticallyActive = false;
     this.filteredRatesWithFlag = this.ratesWithFlag;
+    this.toggleCollapse()
   }
 
   navigateToDetail(code: string): void {
     this.router.navigate([`/detail/${code}`]);
+    this.viewPortScroller.scrollToPosition([0, 0])
   }
 
   addToFavourite(code: string, event: Event): void {
@@ -96,7 +106,7 @@ export class CurrencyListComponent implements OnInit {
       foundRate.isAddedToFavourite = false
     }
     this.favouritesRatesService.removeFromFavourites(code)
-    this.sortFavouritesFirst()
+    this.getRatesWithFlags()
   }
 
   private checkFavouritesAndSort() {

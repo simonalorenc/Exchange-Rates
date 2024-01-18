@@ -16,4 +16,9 @@ export class GoldPriceService {
     const url = `${this.BASE_URL}/last/${this.NUMBER_OF_LAST_DAYS}`
     return this.http.get<GoldPriceDto[]>(url)
   }
+
+  getGoldPricesDtoFromRangeTime(startDate: string, endDate: string): Observable<GoldPriceDto[]> {
+    const url = `${this.BASE_URL}/${startDate}/${endDate}`
+    return this.http.get<GoldPriceDto[]>(url)
+  }
 }
