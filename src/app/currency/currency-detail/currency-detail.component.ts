@@ -30,7 +30,6 @@ export class CurrencyDetailComponent implements OnInit {
   heartIcon: IconDefinition = farHeart;
   isRateInFavourites: boolean = false;
   dates: string[] = [];
-
   currentPage: number = 1;
 
   constructor(
@@ -57,17 +56,47 @@ export class CurrencyDetailComponent implements OnInit {
 
   private getCurrencyDetailsAndFlagUrl(): void {
     const countryCode = this.currenciesRepository.getCountryCode(this.code);
-    this.getCurrencyDetails(this.code);
+    this.dates = this.datesService.getStartAndEndDate(6)
     this.flagUrl = this.flagsService.getFlagUrl(countryCode);
+    this.displayExchangeRates()
   }
 
-  private getCurrencyDetails(code: string): void {
-    this.dates = this.datesService.getStartAndEndDate(6)
-    this.exchangeRateService.getCurrencyExchangeTableDtoForDateRange(code, this.dates[0], this.dates[1])
-      .subscribe((result) => {
-        this.name = result.currency
-        this.displayExchangeRates()
+  // private getCurrencyDetails(code: string): void {
+  //   this.dates = this.datesService.getStartAndEndDate(6)
+  //   this.exchangeRateService.getCurrencyExchangeTableDtoForDateRange(code, this.dates[0], this.dates[1])
+  //     .subscribe((result) => {
+  //       this.name = result.currency
+  //       this.displayExchangeRates()
+  //     })
+  // }
+
+  displayExchangeRates() {
+    this.exchangeRateService.getCurrencyExchangeTableDtoForDateRange(this.code, this.dates[0], this.dates[1]).subscribe((currencyResult) => {
+      this.name = currencyResult.currency
+      
+      const allDates = this.getAllDatesInRange()
+      const exchangeRatesMap = new Map<string, number>()
+      currencyResult.rates.forEach(dto => {
+        const currency = new CurrencyRate(dto)
+        exchangeRatesMap.set(currency.date, currency.mid)
       })
+      this.detailCurrencyRates = allDates.reverse().map(date => ({
+        date: date,
+        mid: exchangeRatesMap.get(date) !== undefined ? exchangeRatesMap.get(date)! : -1
+      }))
+    })
+  }
+
+  //TODO przenieść do serwisu
+  getAllDatesInRange() {
+    const allDates: string[] = []
+    let currentDate = new Date(this.dates[0])
+    const endDateObj = new Date(this.dates[1])
+    while (currentDate <= endDateObj) {
+      allDates.push(this.datesService.getFormattedDate(currentDate))
+      currentDate.setDate(currentDate.getDate() + 1)
+    }
+    return allDates
   }
 
   onPageChangePrevious() {
@@ -95,35 +124,7 @@ export class CurrencyDetailComponent implements OnInit {
 
   changePageToFirst() {
     this.currentPage = 1
-    this.getCurrencyDetails(this.code)
-  }
-
-  displayExchangeRates() {
-    this.exchangeRateService.getCurrencyExchangeTableDtoForDateRange(this.code, this.dates[0], this.dates[1]).subscribe((currencyResult) => {
-      const currencyRatesDto = currencyResult.rates.reverse();
-      
-      const allDates = this.getAllDatesInRange()
-      const exchangeRatesMap = new Map<string, number>()
-      currencyResult.rates.forEach(dto => {
-        const currency = new CurrencyRate(dto)
-        exchangeRatesMap.set(currency.date, currency.mid)
-      })
-      this.detailCurrencyRates = allDates.reverse().map(date => ({
-        date: date,
-        mid: exchangeRatesMap.get(date) !== undefined ? exchangeRatesMap.get(date)! : -1
-      }))
-    })
-  }
-
-  getAllDatesInRange() {
-    const allDates: string[] = []
-    let currentDate = new Date(this.dates[0])
-    const endDateObj = new Date(this.dates[1])
-    while (currentDate <= endDateObj) {
-      allDates.push(this.datesService.getFormattedDate(currentDate))
-      currentDate.setDate(currentDate.getDate() + 1)
-    }
-    return allDates
+    this.getCurrencyDetailsAndFlagUrl()
   }
 
   isChartFromLastSevenDaysActive(): void {
@@ -142,16 +143,6 @@ export class CurrencyDetailComponent implements OnInit {
     this.activeChart = ActiveChart.LastMonths;
     this.router.navigate([`detail/${this.code}/chart-from-last-months`]);
     this.viewportScroller.scrollToAnchor('chartView');
-  }
-
-  addToFavourites(code: string): void {
-    this.favouritesRatesService.addToFavourites(code);
-    this.isRateInFavourites = !this.isRateInFavourites;
-  }
-
-  removeFromFavourites(code: string): void {
-    this.favouritesRatesService.removeFromFavourites(code);
-    this.isRateInFavourites = !this.isRateInFavourites;
   }
 
   heartIconClick(code: string): void {
