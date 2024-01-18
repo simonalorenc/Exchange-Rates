@@ -31,7 +31,7 @@ export class CurrencyDetailComponent implements OnInit {
   isRateInFavourites: boolean = false;
   dates: string[] = [];
   currentPage: number = 1;
-  NUMBER_ITEMS_ON_PAGE: number = 6
+  private NUMBER_ITEMS_ON_PAGE: number = 7
 
   constructor(
     private route: ActivatedRoute,
@@ -65,8 +65,7 @@ export class CurrencyDetailComponent implements OnInit {
   displayExchangeRates() {
     this.exchangeRateService.getCurrencyExchangeTableDtoForDateRange(this.code, this.dates[0], this.dates[1]).subscribe((currencyResult) => {
       this.name = this.currencyTranslationService.updateDetailCurrency(this.locale, currencyResult)
-      console.log(currencyResult)
-      const allDates = this.getAllDatesInRange()
+      const allDates = this.datesService.getAllFormattedDatesBetweenRange(new Date(this.dates[0]), new Date(this.dates[1]))
       const exchangeRatesMap = new Map<string, number>()
       currencyResult.rates.forEach(dto => {
         const currency = new CurrencyRate(dto)
@@ -77,18 +76,6 @@ export class CurrencyDetailComponent implements OnInit {
         mid: exchangeRatesMap.get(date) !== undefined ? exchangeRatesMap.get(date)! : -1
       }))
     })
-  }
-
-  //TODO przenieść do serwisu
-  getAllDatesInRange() {
-    const allDates: string[] = []
-    let currentDate = new Date(this.dates[0])
-    const endDateObj = new Date(this.dates[1])
-    while (currentDate <= endDateObj) {
-      allDates.push(this.datesService.getFormattedDate(currentDate))
-      currentDate.setDate(currentDate.getDate() + 1)
-    }
-    return allDates
   }
 
   onPageChangePrevious() {
@@ -103,11 +90,11 @@ export class CurrencyDetailComponent implements OnInit {
 
   getDates(pageNumber: number) {
     const endDate = new Date();
-    endDate.setDate(endDate.getDate() - (pageNumber - 1) * 7);
+    endDate.setDate(endDate.getDate() - (pageNumber - 1) * this.NUMBER_ITEMS_ON_PAGE);
     const endDateString = this.datesService.getFormattedDate(endDate);
 
     const startDate = new Date();
-    startDate.setDate(startDate.getDate() - pageNumber * 7 + 1);
+    startDate.setDate(startDate.getDate() - pageNumber * this.NUMBER_ITEMS_ON_PAGE + 1);
     const startDateString = this.datesService.getFormattedDate(startDate);
 
     this.dates = [startDateString, endDateString];

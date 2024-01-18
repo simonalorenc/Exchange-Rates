@@ -11,9 +11,17 @@ export class DatesService {
     const todayDate = new Date()
     const endDateString = this.getFormattedDate(todayDate)
     const startDate = todayDate
-    startDate.setDate(todayDate.getDate() - numberOfItemsOnPage)
+    startDate.setDate(todayDate.getDate() - numberOfItemsOnPage + 1)
     const startDateString = this.getFormattedDate(startDate)
     return [startDateString, endDateString]
+  }
+
+  getAllFormattedDatesBetweenRange(startDate: Date, endDate: Date): string[] {
+    const allDates: string[] = []
+    for (let date = startDate; date <= endDate; date.setDate(date.getDate() + 1)) {
+      allDates.push(this.getFormattedDate(date));
+    }
+    return allDates;
   }
 
   getFormattedDate(date: Date): string {
