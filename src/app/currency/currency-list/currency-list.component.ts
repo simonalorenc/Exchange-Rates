@@ -15,6 +15,8 @@ import { ViewportScroller } from '@angular/common';
   styleUrls: ['./currency-list.component.scss'],
 })
 export class CurrencyListComponent implements OnInit {
+  SORT_KEY: string = 'sort'
+
   private ratesWithFlag: RateWithFlag[] = [];
   filteredRatesWithFlag: RateWithFlag[] = [];
   filterForm: FormGroup;
@@ -42,17 +44,46 @@ export class CurrencyListComponent implements OnInit {
   ngOnInit(): void {
     this.getRatesWithFlags();
 
+    this.filterTheList()
+
+    this.setSortingMethod()
+  }
+
+  private filterTheList() {
     this.filterForm.get('filterInputValue')?.valueChanges.subscribe((value) => {
       this.filterCurrencies(value);
     });
   }
 
+  private setSortingMethod() {
+    localStorage.setItem(this.SORT_KEY, JSON.stringify(this.isSortAlphabeticallyActive))
+  }
+
   getRatesWithFlags(): void {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.ratesWithFlag = this.currencyTranslationService.getRateWithFlagForLocale(this.locale, rates)
+      console.log(this.ratesWithFlag)
       this.filteredRatesWithFlag = this.ratesWithFlag;
       this.checkFavouritesAndSort();
     });
+  }
+
+  private checkFavouritesAndSort() {
+    this.favouritesRatesService.checkFavourites(this.ratesWithFlag)
+    this.sortFavouritesFirst()
+  }
+
+  private sortFavouritesFirst() {
+    this.ratesWithFlag.sort((a, b) => {
+      if(a.isAddedToFavourite && !b.isAddedToFavourite) {
+        return -1
+      } else if (!a.isAddedToFavourite && b.isAddedToFavourite) {
+        return 1
+      } else {
+        return 0
+      } 
+    })
+    this.setSortingMethod()
   }
 
   private filterCurrencies(filterText: string): void {
@@ -75,12 +106,14 @@ export class CurrencyListComponent implements OnInit {
     this.filteredRatesWithFlag = this.ratesWithFlag.concat().sort((a, b) => {
       return a.rate.currency.localeCompare(b.rate.currency);
     });
+    this.setSortingMethod()
     this.toggleCollapse()
   }
 
   sortByFavourites(): void {
     this.isSortAlphabeticallyActive = false;
     this.filteredRatesWithFlag = this.ratesWithFlag;
+    this.setSortingMethod()
     this.toggleCollapse()
   }
 
@@ -109,20 +142,17 @@ export class CurrencyListComponent implements OnInit {
     this.getRatesWithFlags()
   }
 
-  private checkFavouritesAndSort() {
-    this.favouritesRatesService.checkFavourites(this.ratesWithFlag)
-    this.sortFavouritesFirst()
-  }
+  // private getStoredRates(): string[] {
+  //   let storedRates: string[] | null = JSON.parse(localStorage.getItem(this.FAVOURITES_KEY) || 'null');
+  //     if (storedRates === null) {
+  //       storedRates = [];
+  //     }
+  //   return storedRates
+  // }
 
-  private sortFavouritesFirst() {
-    this.ratesWithFlag.sort((a, b) => {
-      if(a.isAddedToFavourite && !b.isAddedToFavourite) {
-        return -1
-      } else if (!a.isAddedToFavourite && b.isAddedToFavourite) {
-        return 1
-      } else {
-        return 0
-      } 
-    })
-  }
+  // addToFavourites(code: string): void {
+  //   const storedRates = this.getStoredRates()
+  //   storedRates.push(code);
+  //   localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(storedRates))
+  // }
 }
