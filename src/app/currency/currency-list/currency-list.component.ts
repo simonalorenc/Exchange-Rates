@@ -27,6 +27,7 @@ export class CurrencyListComponent implements OnInit {
   emptyHeartIcon: IconDefinition = farHeart;
   fullHeartIcon: IconDefinition = fasHeart;
   isCollapsed: boolean = true
+  inputValue!: string
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
@@ -50,16 +51,6 @@ export class CurrencyListComponent implements OnInit {
     this.setSortingMethod()
   }
 
-  private filterTheList() {
-    this.filterForm.get('filterInputValue')?.valueChanges.subscribe((value) => {
-      this.filterCurrencies(value);
-    });
-  }
-
-  private setSortingMethod() {
-    localStorage.setItem(this.SORT_KEY, JSON.stringify(this.isSortAlphabeticallyActive))
-  }
-
   getRatesWithFlags(): void {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.initialRatesWithFlag = this.currencyTranslationService.getRateWithFlagForLocale(this.locale, rates)
@@ -69,6 +60,17 @@ export class CurrencyListComponent implements OnInit {
         this.checkFavouritesAndSort();
       }
     });
+  }
+
+  private filterTheList() {
+    this.filterForm.get('filterInputValue')?.valueChanges.subscribe((value) => {
+      this.inputValue = value
+      this.filterCurrencies(value);
+    });
+  }
+
+  private setSortingMethod() {
+    localStorage.setItem(this.SORT_KEY, JSON.stringify(this.isSortAlphabeticallyActive))
   }
 
   private checkFavouritesAndSort() {
@@ -97,6 +99,7 @@ export class CurrencyListComponent implements OnInit {
           .includes(filterText.toLowerCase())
       );
     });
+    this.sortFavouritesFirst()
   }
 
   toggleCollapse(): void {
@@ -110,14 +113,18 @@ export class CurrencyListComponent implements OnInit {
     });
     this.setSortingMethod()
     this.toggleCollapse()
+    console.log(this.initialRatesWithFlag)
+    console.log(this.filteredRatesWithFlag)
   }
 
   sortByFavourites(): void {
     this.isSortAlphabeticallyActive = false;
-    this.filteredRatesWithFlag = this.ratesWithFlag;
+    this.filteredRatesWithFlag = [...this.initialRatesWithFlag];
     this.checkFavouritesAndSort()
     this.setSortingMethod()
     this.toggleCollapse()
+    console.log(this.initialRatesWithFlag)
+    console.log(this.filteredRatesWithFlag)
   }
 
   navigateToDetail(code: string): void {
@@ -132,10 +139,10 @@ export class CurrencyListComponent implements OnInit {
       foundRate.isAddedToFavourite = true
     }
     this.favouritesRatesService.addToFavourites(code)
-    if(!this.isSortAlphabeticallyActive) {
+    if(!this.isSortAlphabeticallyActive && this.inputValue === '') {
       this.filteredRatesWithFlag = [...this.initialRatesWithFlag]
       this.sortFavouritesFirst()
-    }
+    } 
   }
 
   removeFromFavourite(code: string, event: Event): void {
