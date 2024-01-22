@@ -15,11 +15,10 @@ import { ViewportScroller } from '@angular/common';
   styleUrls: ['./currency-list.component.scss'],
 })
 export class CurrencyListComponent implements OnInit {
-  SORT_KEY: string = 'sortAlphabetically'
+  private SORT_KEY: string = 'sortAlphabetically'
 
-  initialRatesWithFlag: RateWithFlag[] = []
+  private initialRatesWithFlag: RateWithFlag[] = []
   ratesWithFlag: RateWithFlag[] = [];
-  filteredRatesWithFlag: RateWithFlag[] = [];
   filterForm: FormGroup;
   isSortAlphabeticallyActive: boolean = false;
   sortAlphabeticallyIcon: IconDefinition = faArrowUpAZ;
@@ -27,7 +26,6 @@ export class CurrencyListComponent implements OnInit {
   emptyHeartIcon: IconDefinition = farHeart;
   fullHeartIcon: IconDefinition = fasHeart;
   isCollapsed: boolean = true
-  inputValue!: string
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
@@ -36,7 +34,7 @@ export class CurrencyListComponent implements OnInit {
     private currencyTranslationService: CurrencyTranslationService,
     private viewPortScroller: ViewportScroller,
     private favouritesRatesService: FavouritesRatesService,
-    @Inject(LOCALE_ID) public locale: string
+    @Inject(LOCALE_ID) public locale: string //TODO public?
   ) {
     this.filterForm = this.formBuilder.group({
       filterInputValue: [''],
@@ -44,54 +42,37 @@ export class CurrencyListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const sortType = localStorage.getItem(this.SORT_KEY)
+    if(sortType) {
+      this.isSortAlphabeticallyActive = JSON.parse(sortType)
+    }
+    this.filterByInputValue()
     this.getRatesWithFlags();
-
-    this.filterTheList()
-
-    this.setSortingMethod()
   }
 
-  getRatesWithFlags(): void {
+  private filterByInputValue() {
+    this.filterForm.get('filterInputValue')?.valueChanges.subscribe((value) => {
+      this.filterAndSortRatesWithFlags()
+    });
+  }
+
+  private getRatesWithFlags(): void {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.initialRatesWithFlag = this.currencyTranslationService.getRateWithFlagForLocale(this.locale, rates)
+      this.favouritesRatesService.checkFavourites(this.initialRatesWithFlag)
       this.ratesWithFlag = [...this.initialRatesWithFlag]
-      this.filteredRatesWithFlag = this.ratesWithFlag;
-      if(!this.isSortAlphabeticallyActive) {
-        this.checkFavouritesAndSort();
-      }
+      this.sortCurrencies()
     });
   }
 
-  private filterTheList() {
-    this.filterForm.get('filterInputValue')?.valueChanges.subscribe((value) => {
-      this.inputValue = value
-      this.filterCurrencies(value);
-    });
+  private filterAndSortRatesWithFlags() {
+    let currentFilter = this.filterForm.get('filterInputValue')?.value
+    this.ratesWithFlag = this.filterCurrencies(currentFilter)
+    this.sortCurrencies()
   }
 
-  private setSortingMethod() {
-    localStorage.setItem(this.SORT_KEY, JSON.stringify(this.isSortAlphabeticallyActive))
-  }
-
-  private checkFavouritesAndSort() {
-    this.favouritesRatesService.checkFavourites(this.ratesWithFlag)
-    this.sortFavouritesFirst()
-  }
-
-  private sortFavouritesFirst() {
-    this.filteredRatesWithFlag.sort((a, b) => {
-      if(a.isAddedToFavourite && !b.isAddedToFavourite) {
-        return -1
-      } else if (!a.isAddedToFavourite && b.isAddedToFavourite) {
-        return 1
-      } else {
-        return 0
-      } 
-    })
-  }
-
-  private filterCurrencies(filterText: string): void {
-    this.filteredRatesWithFlag = this.ratesWithFlag.filter((rateWithFlag) => {
+  private filterCurrencies(filterText: string): RateWithFlag[] {
+    return this.initialRatesWithFlag.filter((rateWithFlag) => {
       return (
         rateWithFlag.rate.code.toLowerCase().includes(filterText) ||
         rateWithFlag.rate.currency
@@ -99,32 +80,39 @@ export class CurrencyListComponent implements OnInit {
           .includes(filterText.toLowerCase())
       );
     });
-    this.sortFavouritesFirst()
+  }
+
+  private sortCurrencies(): void {
+    if(this.isSortAlphabeticallyActive) {
+      this.ratesWithFlag.sort((a, b) => {
+        return a.rate.currency.localeCompare(b.rate.currency);
+      });
+    } else {
+      this.ratesWithFlag.sort((a, b) => {
+        if(a.isAddedToFavourite && !b.isAddedToFavourite) {
+          return -1
+        } else if (!a.isAddedToFavourite && b.isAddedToFavourite) {
+          return 1
+        } else {
+          return 0
+        } 
+      })
+    }
+  }
+
+  setSortType(isSortAlphabetically: boolean): void {
+    this.isSortAlphabeticallyActive = isSortAlphabetically;
+    this.setSortingMethod()
+    this.toggleCollapse()
+    this.filterAndSortRatesWithFlags()
+  }
+
+  private setSortingMethod() {
+    localStorage.setItem(this.SORT_KEY, JSON.stringify(this.isSortAlphabeticallyActive))
   }
 
   toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed
-  }
-
-  sortAlphabetically(): void {
-    this.isSortAlphabeticallyActive = true;
-    this.filteredRatesWithFlag = this.ratesWithFlag.concat().sort((a, b) => {
-      return a.rate.currency.localeCompare(b.rate.currency);
-    });
-    this.setSortingMethod()
-    this.toggleCollapse()
-    console.log(this.initialRatesWithFlag)
-    console.log(this.filteredRatesWithFlag)
-  }
-
-  sortByFavourites(): void {
-    this.isSortAlphabeticallyActive = false;
-    this.filteredRatesWithFlag = [...this.initialRatesWithFlag];
-    this.checkFavouritesAndSort()
-    this.setSortingMethod()
-    this.toggleCollapse()
-    console.log(this.initialRatesWithFlag)
-    console.log(this.filteredRatesWithFlag)
   }
 
   navigateToDetail(code: string): void {
@@ -134,29 +122,21 @@ export class CurrencyListComponent implements OnInit {
 
   addToFavourite(code: string, event: Event): void {
     event.stopPropagation()
-    const foundRate = this.filteredRatesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
+    const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
     if(foundRate) {
       foundRate.isAddedToFavourite = true
     }
     this.favouritesRatesService.addToFavourites(code)
-    if(!this.isSortAlphabeticallyActive && this.inputValue === '') {
-      this.filteredRatesWithFlag = [...this.initialRatesWithFlag]
-      this.sortFavouritesFirst()
-    } 
+    this.filterAndSortRatesWithFlags()
   }
 
   removeFromFavourite(code: string, event: Event): void {
     event.stopPropagation()
-    const foundRate = this.filteredRatesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
+    const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
     if(foundRate) {
       foundRate.isAddedToFavourite = false
     }
     this.favouritesRatesService.removeFromFavourites(code)
-    this.filteredRatesWithFlag = [...this.initialRatesWithFlag]
-    if(!this.isSortAlphabeticallyActive) {
-      this.sortFavouritesFirst()
-    } else {
-      this.sortAlphabetically()
-    }
+    this.filterAndSortRatesWithFlags()
   }
 }
