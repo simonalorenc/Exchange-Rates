@@ -15,8 +15,8 @@
             (click)="toggleCollapse()">
           </app-button>
           <ul class="dropdown-menu cursor" [collapse]="isCollapsed">
-            <li><div class="dropdown-item" (click)="sortAlphabetically()">Sort alphabetically</div></li>
-            <li><div class="dropdown-item" (click)="sortByFavourites()">Favourites first</div></li>
+            <li><div class="dropdown-item" [class.active]="isSortAlphabeticallyActive" (click)="setSortType(true)">Sort alphabetically</div></li>
+            <li><div class="dropdown-item" [class.active]="!isSortAlphabeticallyActive" (click)="setSortType(false)">Favourites first</div></li>
           </ul>
         </div>
       </div>
@@ -25,7 +25,7 @@
       <div class="row d-flex justify-content-center">
         <div
           class="col-12 col-md-6 pb-1 p-1"
-          *ngFor="let currency of filteredRatesWithFlag"
+          *ngFor="let currency of ratesWithFlag"
         >
           <div class="card" (click)="navigateToDetail(currency.rate.code)">
             <div

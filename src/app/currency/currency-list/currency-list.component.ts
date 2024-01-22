@@ -15,10 +15,10 @@ import { ViewportScroller } from '@angular/common';
   styleUrls: ['./currency-list.component.scss'],
 })
 export class CurrencyListComponent implements OnInit {
-  SORT_KEY: string = 'sort'
+  private SORT_KEY: string = 'sortAlphabetically'
 
-  private ratesWithFlag: RateWithFlag[] = [];
-  filteredRatesWithFlag: RateWithFlag[] = [];
+  private initialRatesWithFlag: RateWithFlag[] = []
+  ratesWithFlag: RateWithFlag[] = [];
   filterForm: FormGroup;
   isSortAlphabeticallyActive: boolean = false;
   sortAlphabeticallyIcon: IconDefinition = faArrowUpAZ;
@@ -34,7 +34,7 @@ export class CurrencyListComponent implements OnInit {
     private currencyTranslationService: CurrencyTranslationService,
     private viewPortScroller: ViewportScroller,
     private favouritesRatesService: FavouritesRatesService,
-    @Inject(LOCALE_ID) public locale: string
+    @Inject(LOCALE_ID) public locale: string //TODO public?
   ) {
     this.filterForm = this.formBuilder.group({
       filterInputValue: [''],
@@ -42,52 +42,37 @@ export class CurrencyListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const sortType = localStorage.getItem(this.SORT_KEY)
+    if(sortType) {
+      this.isSortAlphabeticallyActive = JSON.parse(sortType)
+    }
+    this.filterByInputValue()
     this.getRatesWithFlags();
-
-    this.filterTheList()
-
-    this.setSortingMethod()
   }
 
-  private filterTheList() {
+  private filterByInputValue() {
     this.filterForm.get('filterInputValue')?.valueChanges.subscribe((value) => {
-      this.filterCurrencies(value);
+      this.filterAndSortRatesWithFlags()
     });
   }
 
-  private setSortingMethod() {
-    localStorage.setItem(this.SORT_KEY, JSON.stringify(this.isSortAlphabeticallyActive))
-  }
-
-  getRatesWithFlags(): void {
+  private getRatesWithFlags(): void {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
-      this.ratesWithFlag = this.currencyTranslationService.getRateWithFlagForLocale(this.locale, rates)
-      console.log(this.ratesWithFlag)
-      this.filteredRatesWithFlag = this.ratesWithFlag;
-      this.checkFavouritesAndSort();
+      this.initialRatesWithFlag = this.currencyTranslationService.getRateWithFlagForLocale(this.locale, rates)
+      this.favouritesRatesService.checkFavourites(this.initialRatesWithFlag)
+      this.ratesWithFlag = [...this.initialRatesWithFlag]
+      this.sortCurrencies()
     });
   }
 
-  private checkFavouritesAndSort() {
-    this.favouritesRatesService.checkFavourites(this.ratesWithFlag)
-    this.sortFavouritesFirst()
+  private filterAndSortRatesWithFlags() {
+    let currentFilter = this.filterForm.get('filterInputValue')?.value
+    this.ratesWithFlag = this.filterCurrencies(currentFilter)
+    this.sortCurrencies()
   }
 
-  private sortFavouritesFirst() {
-    this.ratesWithFlag.sort((a, b) => {
-      if(a.isAddedToFavourite && !b.isAddedToFavourite) {
-        return -1
-      } else if (!a.isAddedToFavourite && b.isAddedToFavourite) {
-        return 1
-      } else {
-        return 0
-      } 
-    })
-    this.setSortingMethod()
-  }
-
-  private filterCurrencies(filterText: string): void {
-    this.filteredRatesWithFlag = this.ratesWithFlag.filter((rateWithFlag) => {
+  private filterCurrencies(filterText: string): RateWithFlag[] {
+    return this.initialRatesWithFlag.filter((rateWithFlag) => {
       return (
         rateWithFlag.rate.code.toLowerCase().includes(filterText) ||
         rateWithFlag.rate.currency
@@ -97,24 +82,37 @@ export class CurrencyListComponent implements OnInit {
     });
   }
 
+  private sortCurrencies(): void {
+    if(this.isSortAlphabeticallyActive) {
+      this.ratesWithFlag.sort((a, b) => {
+        return a.rate.currency.localeCompare(b.rate.currency);
+      });
+    } else {
+      this.ratesWithFlag.sort((a, b) => {
+        if(a.isAddedToFavourite && !b.isAddedToFavourite) {
+          return -1
+        } else if (!a.isAddedToFavourite && b.isAddedToFavourite) {
+          return 1
+        } else {
+          return 0
+        } 
+      })
+    }
+  }
+
+  setSortType(isSortAlphabetically: boolean): void {
+    this.isSortAlphabeticallyActive = isSortAlphabetically;
+    this.setSortingMethod()
+    this.toggleCollapse()
+    this.filterAndSortRatesWithFlags()
+  }
+
+  private setSortingMethod() {
+    localStorage.setItem(this.SORT_KEY, JSON.stringify(this.isSortAlphabeticallyActive))
+  }
+
   toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed
-  }
-
-  sortAlphabetically(): void {
-    this.isSortAlphabeticallyActive = true;
-    this.filteredRatesWithFlag = this.ratesWithFlag.concat().sort((a, b) => {
-      return a.rate.currency.localeCompare(b.rate.currency);
-    });
-    this.setSortingMethod()
-    this.toggleCollapse()
-  }
-
-  sortByFavourites(): void {
-    this.isSortAlphabeticallyActive = false;
-    this.filteredRatesWithFlag = this.ratesWithFlag;
-    this.setSortingMethod()
-    this.toggleCollapse()
   }
 
   navigateToDetail(code: string): void {
@@ -124,35 +122,21 @@ export class CurrencyListComponent implements OnInit {
 
   addToFavourite(code: string, event: Event): void {
     event.stopPropagation()
-    const foundRate = this.filteredRatesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
+    const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
     if(foundRate) {
       foundRate.isAddedToFavourite = true
     }
     this.favouritesRatesService.addToFavourites(code)
-    this.sortFavouritesFirst()
+    this.filterAndSortRatesWithFlags()
   }
 
   removeFromFavourite(code: string, event: Event): void {
     event.stopPropagation()
-    const foundRate = this.filteredRatesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
+    const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
     if(foundRate) {
       foundRate.isAddedToFavourite = false
     }
     this.favouritesRatesService.removeFromFavourites(code)
-    this.getRatesWithFlags()
+    this.filterAndSortRatesWithFlags()
   }
-
-  // private getStoredRates(): string[] {
-  //   let storedRates: string[] | null = JSON.parse(localStorage.getItem(this.FAVOURITES_KEY) || 'null');
-  //     if (storedRates === null) {
-  //       storedRates = [];
-  //     }
-  //   return storedRates
-  // }
-
-  // addToFavourites(code: string): void {
-  //   const storedRates = this.getStoredRates()
-  //   storedRates.push(code);
-  //   localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(storedRates))
-  // }
 }
