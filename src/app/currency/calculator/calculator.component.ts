@@ -11,15 +11,16 @@ import { FlagsService } from '../data/flags.service';
 })
 export class CalculatorComponent implements OnInit {
   ratesWithFlag: RateWithFlag[] = []
+  exampleRatesWithFlag: RateWithFlag[] = []
 
   exampleExchangeRate: boolean = true
   exampleExchangeRateToConvert: boolean = true
 
   exchangeRateCode: string = ''
-  exchangeRateAmount: number = 1
+  exchangeRateAmount!: number
 
   exchangeRateToConvertCode: string = ''
-  exchangeRateToConvert: number = 0
+  exchangeRateToConvert!: number
 
   isClicked: boolean = false
   isClickedToConvert: boolean = false
@@ -27,7 +28,7 @@ export class CalculatorComponent implements OnInit {
   flagUrl!: string
   flagUrlToConvert!: string
 
-  inputValue1: number = 0
+  inputValue1: number = 1
   inputValue2: number = 0
 
   constructor(
@@ -43,7 +44,7 @@ export class CalculatorComponent implements OnInit {
   private getRatesWithFlags(): void {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.ratesWithFlag = rates
-      console.log(rates)
+      this.exampleRatesWithFlag.push(rates[0], rates[1])
     });
   }
 
@@ -62,6 +63,7 @@ export class CalculatorComponent implements OnInit {
     this.exampleExchangeRate = false
     const countryCode = this.currenciesRepository.getCountryCode(code)
     this.flagUrl = this.flagsService.getFlagUrl(countryCode)
+    this.selectCurrency()
   }
 
   clickedCurrencyToConvert(code: string) {
@@ -70,14 +72,15 @@ export class CalculatorComponent implements OnInit {
     this.exampleExchangeRateToConvert = false
     const countryCode = this.currenciesRepository.getCountryCode(code)
     this.flagUrlToConvert = this.flagsService.getFlagUrl(countryCode)
+    this.selectCurrencyToConvert()
   }
 
   updateConvertedValue() {
-    this.inputValue2 = (this.inputValue1 * this.exchangeRateAmount) / this.exchangeRateToConvert
+    this.inputValue2 = +((this.inputValue1 * this.exchangeRateAmount) / this.exchangeRateToConvert).toFixed(2)
   }
 
   updateOriginalValue() {
-    this.inputValue1 = (this.inputValue2 * this.exchangeRateToConvert) / this.exchangeRateAmount
+    this.inputValue1 = +((this.inputValue2 * this.exchangeRateToConvert) / this.exchangeRateAmount).toFixed(2)
   }
 
 }

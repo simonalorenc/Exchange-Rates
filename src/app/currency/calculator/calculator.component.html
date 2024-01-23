@@ -1,15 +1,22 @@
-<section class="section-variant">
+<section class="section-variant"> 
     <div class="container">
-        <div class="bg-warning d-flex">
-            <div class="m-4 bg-white position-relative">
-                <div class="m-4 custom d-flex">
+        <div class="row d-flex justify-content-center">
+            <div class="col-12 col-md-6">
+                <div class="m-4 p-4 bg-white d-flex rounded-pill border border-secondary position-relative">
                     <input type="number" class="form-control me-2 h-150 rounded-5" (input)="updateConvertedValue()" [(ngModel)]="inputValue1">
                     <div class="d-flex m-3">
                         <div (click)="selectCurrency()">
-                            <div class="fw-bold" *ngIf="exampleExchangeRate">EUR</div>
+                            <div class="d-flex" *ngIf="exampleExchangeRate">
+                                <img
+                                [src]="exampleRatesWithFlag[0].flagUrl"
+                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+                                i18n-alt
+                                alt="Country flag"
+                                />
+                                <div class="fw-bold ms-3">{{ exampleRatesWithFlag[0].rate.code }}</div>
+                            </div>
                             <div *ngIf="!exampleExchangeRate" class="d-flex">
                                 <img
-                                class="flag"
                                 [src]="flagUrl"
                                 onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
                                 i18n-alt
@@ -34,13 +41,20 @@
                     </div>
                 </div>
             </div>
-            <div>></div>
-            <div class="m-4 bg-white position-relative">
-                <div class="m-4 custom d-flex">
+            <div class="col-12 col-md-6">
+                <div class="m-4 p-4 bg-white d-flex rounded-pill position-relative">
                     <input type="number" class="form-control me-2 h-150 rounded-5 d-flex align-items-center" [(ngModel)]="inputValue2" (input)="updateOriginalValue()">
                     <div class="d-flex m-3">
                         <div (click)="selectCurrencyToConvert()">
-                            <div class="fw-bold" *ngIf="exampleExchangeRateToConvert">PLN</div>
+                            <div class="d-flex" *ngIf="exampleExchangeRateToConvert">
+                                <img
+                                [src]="exampleRatesWithFlag[1].flagUrl"
+                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+                                i18n-alt
+                                alt="Country flag"
+                                />
+                                <div class="fw-bold ms-3">{{ exampleRatesWithFlag[1].rate.code }}</div>
+                            </div>
                             <div *ngIf="!exampleExchangeRateToConvert" class="d-flex">
                                 <img
                                 [src]="flagUrlToConvert"
@@ -68,7 +82,98 @@
                     </div>
                 </div>
             </div>
-        </div>  
+        </div>
     </div>
 </section>
+
+<!-- <section class="section-variant">
+    <div class="container">
+        <div class="bg-warning d-flex">
+
+            <div class="row m-4 bg-white position-relative">
+                <div class="m-4 custom d-flex">
+                    <input type="number" class="form-control me-2 h-150 rounded-5" (input)="updateConvertedValue()" [(ngModel)]="inputValue1">
+                    <div class="d-flex m-3">
+                        <div (click)="selectCurrency()">
+                            <div class="d-flex" *ngIf="exampleExchangeRate">
+                                <img
+                                [src]="exampleRatesWithFlag[0].flagUrl"
+                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+                                i18n-alt
+                                alt="Country flag"
+                                />
+                                <div class="fw-bold ms-3">{{ exampleRatesWithFlag[0].rate.code }}</div>
+                            </div>
+                            <div *ngIf="!exampleExchangeRate" class="d-flex">
+                                <img
+                                [src]="flagUrl"
+                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+                                i18n-alt
+                                alt="Country flag"
+                                />
+                                <div class="fw-bold mx-3">{{ exchangeRateCode }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="isClicked" class="dropdown">
+                        <div class="d-flex m-3 pb-3 border-bottom" *ngFor="let rate of ratesWithFlag">
+                            <div class="d-flex" (click)="clickedCurrency(rate.rate.code)">
+                                <img
+                                [src]="rate.flagUrl"
+                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+                                i18n-alt
+                                alt="Country flag"
+                                />
+                                <div class="mx-4 fw-bold">{{ rate.rate.code }}</div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row m-4 bg-white position-relative">
+                <div class="m-4 custom d-flex">
+                    <input type="number" class="form-control me-2 h-150 rounded-5 d-flex align-items-center" [(ngModel)]="inputValue2" (input)="updateOriginalValue()">
+                    <div class="d-flex m-3">
+                        <div (click)="selectCurrencyToConvert()">
+                            <div class="d-flex" *ngIf="exampleExchangeRateToConvert">
+                                <img
+                                [src]="exampleRatesWithFlag[1].flagUrl"
+                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+                                i18n-alt
+                                alt="Country flag"
+                                />
+                                <div class="fw-bold ms-3">{{ exampleRatesWithFlag[1].rate.code }}</div>
+                            </div>
+                            <div *ngIf="!exampleExchangeRateToConvert" class="d-flex">
+                                <img
+                                [src]="flagUrlToConvert"
+                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+                                i18n-alt
+                                alt="Country flag"
+                                />
+                                <div class="fw-bold mx-3">{{ exchangeRateToConvertCode }}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div *ngIf="isClickedToConvert" class="dropdown">
+                        <div class="d-flex m-3 pb-3 border-bottom" *ngFor="let rate of ratesWithFlag">
+                            <div class="d-flex" (click)="clickedCurrencyToConvert(rate.rate.code)">
+                                <img
+                                class="flag"
+                                [src]="rate.flagUrl"
+                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+                                i18n-alt
+                                alt="Country flag"
+                                />
+                                <div class="mx-4 fw-bold">{{ rate.rate.code }}</div> 
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>  
+    </div>
+</section> -->
 
