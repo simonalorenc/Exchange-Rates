@@ -7,12 +7,14 @@ import { ChartFromLastSevenDaysComponent } from '../charts/chart-from-last-seven
 import { ChartFromLastMonthsComponent } from '../charts/chart-from-last-months/chart-from-last-months.component';
 import { CurrencyListComponent } from '../currency/currency-list/currency-list.component';
 import { ChartFromLastDaysComponent } from '../charts/chart-from-last-days/chart-from-last-days.component';
+import { CalculatorComponent } from '../currency/calculator/calculator.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard/currency-list', pathMatch: 'full' },
   { path: 'dashboard', component: DashboardComponent,
     children: [
       { path: 'currency-list', component: CurrencyListComponent },
+      { path: 'calculator', component: CalculatorComponent},
       { path: 'gold-prices', component: GoldPricesComponent },
     ],
   },

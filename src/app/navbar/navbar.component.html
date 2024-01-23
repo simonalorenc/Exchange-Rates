@@ -26,6 +26,15 @@
         >
         <a
           routerLinkActive="active"
+          [routerLink]="['/dashboard/calculator']"
+          class="nav-link"
+          aria-current="page"
+          (click)="onClickCalculator()"
+          i18n
+          >Calculator</a
+        >
+        <a
+          routerLinkActive="active"
           [routerLink]="['/dashboard/gold-prices']"
           class="nav-link"
           (click)="onClickGold()"

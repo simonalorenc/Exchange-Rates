@@ -16,6 +16,13 @@
           />
           <div class="me-4"></div>
           <app-button
+            text="Calculator"
+            i18n-text
+            [routerLink]="['/dashboard/calculator']"
+            (click)="onClickCalculator()"
+          />
+          <div class="me-4"></div>
+          <app-button
             text="Gold"
             i18n-text
             [routerLink]="['/dashboard/gold-prices']"
