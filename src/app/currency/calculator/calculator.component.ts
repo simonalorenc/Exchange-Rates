@@ -9,32 +9,23 @@ import { IconDefinition, faArrowRight } from '@fortawesome/free-solid-svg-icons'
   styleUrls: ['./calculator.component.scss']
 })
 export class CalculatorComponent implements OnInit {
+  fromCurrencyInputData!: CurrencyInputData
+  toCurrencyInputData!: CurrencyInputData
+
   ratesWithFlag: RateWithFlag[] = []
-  exampleRatesWithFlag: RateWithFlag[] = []
+  initFromRateWithFlag!: RateWithFlag
+  initToRateWithFlag!: RateWithFlag
 
-  fromCurrencyInputData: CurrencyInputData | undefined
-  toCurrencyInputData: CurrencyInputData | undefined
-
-  fromValue: number = 1
-  toValue: number = 0
-
-  exampleRateWithFlag!: RateWithFlag
-  secondExampleRateWithFlag!: RateWithFlag
-
-  exchangeRateAmount!: number
-  exchangeRateToConvert: number = 0
-
-  inputValue1: number = 1
-  inputValue2: number = 0
+  private FROM_RATE_CODE: string = 'EUR'
+  private TO_RATE_CODE: string = 'USD'
+  private INIT_FROM_VALUE: number = 1
 
   arrowIcon: IconDefinition = faArrowRight
 
-  @Output() updateConvertedValueInput = new EventEmitter<number>()
-  @Output() updateOriginalValueInput = new EventEmitter<number>()
-
   constructor(
     private currenciesRepository: CurrenciesRepository
-  ) {}
+  ) {
+  }
 
   ngOnInit(): void {
     this.getRatesWithFlags()
@@ -43,40 +34,44 @@ export class CalculatorComponent implements OnInit {
   private getRatesWithFlags(): void {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.ratesWithFlag = rates
-      this.exampleRatesWithFlag.push(rates[0], rates[1])
-      this.exampleRateWithFlag = this.exampleRatesWithFlag[0]
-      this.secondExampleRateWithFlag = this.exampleRatesWithFlag[1]
-      this.exchangeRateToConvert = this.exampleRatesWithFlag[0].rate.mid
-      this.exchangeRateAmount = this.exampleRatesWithFlag[1].rate.mid
-      this.fromValueChanged(this.inputValue1)
+      this.initFromRateWithFlag = rates.find((rate) => {
+        return rate.rate.code === this.FROM_RATE_CODE
+      })!
+      this.initToRateWithFlag = rates.find((rate) => {
+        return rate.rate.code === this.TO_RATE_CODE
+      })!
+      this.fromCurrencyInputData = new CurrencyInputData(this.INIT_FROM_VALUE, this.initFromRateWithFlag.rate.mid)
+      this.toCurrencyInputData = new CurrencyInputData(0, this.initToRateWithFlag.rate.mid)
+
+      this.fromValueChanged(this.INIT_FROM_VALUE)
     });
   }
 
-  updateExchangeRate1(value: number) {
-    this.exchangeRateAmount = value
-    this.fromValueChanged(this.fromValue)
+  updateFromRate(value: number) {
+    this.fromCurrencyInputData.rateValue = value
+    this.fromValueChanged(this.fromCurrencyInputData.inputValue)
   }
 
-  updateExchangeRate2(value: number) {
-    this.exchangeRateToConvert = value
-    this.toValueChanged(this.toValue)
+  updateToRate(value: number) {
+    this.toCurrencyInputData.rateValue = value
+    this.toValueChanged(this.toCurrencyInputData.inputValue)
   }
 
   fromValueChanged(value: number) {
-    this.toValue = +(value * this.exchangeRateAmount / this.exchangeRateToConvert).toFixed(2)
+    this.toCurrencyInputData.inputValue = +(value * this.fromCurrencyInputData.rateValue / this.toCurrencyInputData.rateValue).toFixed(4)
   }
 
   toValueChanged(value: number) {
-    this.fromValue = +(value * this.exchangeRateToConvert / this.exchangeRateAmount).toFixed(2)
+    this.fromCurrencyInputData.inputValue = +(value * this.toCurrencyInputData.rateValue / this.fromCurrencyInputData.rateValue).toFixed(4)
   }
 }
 
 export class CurrencyInputData {
-  value: number
-  rateWithFlag: RateWithFlag
+  inputValue: number
+  rateValue: number
 
-  constructor(value: number, rateWithFlag: RateWithFlag) {
-    this.value = value
-    this.rateWithFlag = rateWithFlag
+  constructor(inputValue: number, rateValue: number) {
+    this.inputValue = inputValue
+    this.rateValue = rateValue
   }
 }

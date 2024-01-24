@@ -10,13 +10,9 @@ import { FlagsService } from '../currency/data/flags.service';
   styleUrls: ['./currency-input.component.scss']
 })
 export class CurrencyInputComponent implements OnInit {
-  isClicked: boolean = false
-  exampleExchangeRate: boolean = true
-  exchangeRateCode: string = ''
-  exchangeRateAmount!: number
-  flagUrl: string = ''
+  isListExpanded: boolean = false
 
-  @Input() exampleRateWithFlag!: RateWithFlag
+  @Input() rateWithFlag!: RateWithFlag
   @Input() ratesWithFlag: RateWithFlag[] = []
   @Input() inputValue: number = 1
 
@@ -32,26 +28,21 @@ export class CurrencyInputComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  selectCurrency(): void {
-    this.isClicked = !this.isClicked
+  toggleList(): void {
+    this.isListExpanded = !this.isListExpanded
   }
 
-  clickedCurrency(code: string) {
-    this.exchangeRateCode = code
-    this.exchangeRatesService.getExchangeRateForCode(code).subscribe(rate => this.exchangeRateAmount = rate)
-    this.exampleExchangeRate = false
-    const countryCode = this.currenciesRepository.getCountryCode(code)
-    this.flagUrl = this.flagsService.getFlagUrl(countryCode)
-    this.selectCurrency()
+  clickedCurrency(rateWithFlag: RateWithFlag) {
+    this.rateWithFlag = rateWithFlag
+    this.toggleList()
     this.updateExchangeRate()
   }
 
   updateExchangeRate() {
-    this.exchangeRateChange.emit(this.exchangeRateAmount)
+    this.exchangeRateChange.emit(this.rateWithFlag.rate.mid)
   }
 
   onValueChanged() {
-    console.log(this.inputValue)
     this.valueChanged.emit(this.inputValue)
   }
 }

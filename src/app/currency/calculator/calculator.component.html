@@ -5,10 +5,10 @@
             <div class="col-12 col-lg-5">
                 <div class="ms-4">Amount</div>
                 <app-currency-input
-                    [exampleRateWithFlag]="secondExampleRateWithFlag"
+                    [rateWithFlag]="initFromRateWithFlag"
                     [ratesWithFlag]="ratesWithFlag"
-                    (exchangeRateChange)="updateExchangeRate1($event)"
-                    [inputValue]="fromValue"
+                    (exchangeRateChange)="updateFromRate($event)"
+                    [inputValue]="fromCurrencyInputData.inputValue"
                     (valueChanged)="fromValueChanged($event)"
                 ></app-currency-input>
             </div>
@@ -16,11 +16,10 @@
             <div class="col-12 col-lg-5">
                 <div class="ms-4">Converted to</div>
                 <app-currency-input
-                    [exampleRateWithFlag]="exampleRateWithFlag"
+                    [rateWithFlag]="initToRateWithFlag"
                     [ratesWithFlag]="ratesWithFlag"
-                    [inputValue]="inputValue2"
-                    (exchangeRateChange)="updateExchangeRate2($event)"
-                    [inputValue]="toValue"
+                    (exchangeRateChange)="updateToRate($event)"
+                    [inputValue]="toCurrencyInputData.inputValue"
                     (valueChanged)="toValueChanged($event)"
                 ></app-currency-input>
             </div>
