@@ -3,6 +3,7 @@ import { CurrenciesRepository } from '../data/currencies-repository';
 import { RateWithFlag } from '../data/rate-with-flag';
 import { ExchangeRateService } from '../data/exchange-rate.service';
 import { FlagsService } from '../data/flags.service';
+import { IconDefinition, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-calculator',
@@ -20,16 +21,18 @@ export class CalculatorComponent implements OnInit {
   exchangeRateAmount!: number
 
   exchangeRateToConvertCode: string = ''
-  exchangeRateToConvert!: number
+  exchangeRateToConvert: number = 0
 
   isClicked: boolean = false
   isClickedToConvert: boolean = false
 
-  flagUrl!: string
-  flagUrlToConvert!: string
+  flagUrl: string = ''
+  flagUrlToConvert: string = ''
 
   inputValue1: number = 1
   inputValue2: number = 0
+
+  arrowIcon: IconDefinition = faArrowRight
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
@@ -45,6 +48,9 @@ export class CalculatorComponent implements OnInit {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.ratesWithFlag = rates
       this.exampleRatesWithFlag.push(rates[0], rates[1])
+      this.exchangeRateToConvert = this.exampleRatesWithFlag[0].rate.mid
+      this.exchangeRateAmount = this.exampleRatesWithFlag[1].rate.mid
+      this.updateConvertedValue()
     });
   }
 
@@ -53,7 +59,6 @@ export class CalculatorComponent implements OnInit {
   }
 
   selectCurrencyToConvert(): void {
-    this.exampleExchangeRateToConvert = false
     this.isClickedToConvert = !this.isClickedToConvert
   }
 
@@ -76,6 +81,7 @@ export class CalculatorComponent implements OnInit {
   }
 
   updateConvertedValue() {
+    console.log(this.inputValue2)
     this.inputValue2 = +((this.inputValue1 * this.exchangeRateAmount) / this.exchangeRateToConvert).toFixed(2)
   }
 
