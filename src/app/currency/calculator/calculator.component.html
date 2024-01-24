@@ -4,89 +4,25 @@
         <div class="row mt-2 d-flex justify-content-center bg-white p-5 rounded-5 border border-warning">
             <div class="col-12 col-lg-5">
                 <div class="ms-4">Amount</div>
-                <div class="my-3 p-4 bg-white d-flex rounded-pill border border-secondary position-relative">
-                    <input type="number" class="form-control me-2 h-150 rounded-5" (input)="updateConvertedValue()" [(ngModel)]="inputValue1">
-                    <div class="d-flex m-3">
-                        <div (click)="selectCurrency()">
-                            <div class="d-flex ps-3 border-start border-secondary" *ngIf="exampleExchangeRate && exampleRatesWithFlag.length >= 2">
-                                <img
-                                *ngIf="exampleRatesWithFlag[1] && exampleRatesWithFlag[1].flagUrl"
-                                [src]="exampleRatesWithFlag[1].flagUrl"
-                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
-                                i18n-alt
-                                alt="Country flag"
-                                />
-                                <div *ngIf="exampleRatesWithFlag[0]" class="fw-bold ms-3">{{ exampleRatesWithFlag[1].rate.code }}</div>
-                            </div>
-                            <div *ngIf="!exampleExchangeRate" class="d-flex ps-3 border-start border-secondary">
-                                <img
-                                [src]="flagUrl"
-                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
-                                i18n-alt
-                                alt="Country flag"
-                                />
-                                <div class="fw-bold ms-3">{{ exchangeRateCode }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div *ngIf="isClicked" class="dropdown">
-                        <div class="d-flex m-3 pb-3 border-bottom" *ngFor="let rate of ratesWithFlag">
-                            <div class="d-flex" (click)="clickedCurrency(rate.rate.code)">
-                                <img
-                                [src]="rate.flagUrl"
-                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
-                                i18n-alt
-                                alt="Country flag"
-                                />
-                                <div class="mx-4 fw-bold">{{ rate.rate.code }}</div> 
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <app-currency-input
+                    [exampleRateWithFlag]="secondExampleRateWithFlag"
+                    [ratesWithFlag]="ratesWithFlag"
+                    (exchangeRateChange)="updateExchangeRate1($event)"
+                    [inputValue]="fromValue"
+                    (valueChanged)="fromValueChanged($event)"
+                ></app-currency-input>
             </div>
             <div class="col-2 d-flex justify-content-center align-items-center my-4"><fa-icon [icon]="arrowIcon" class="fa-icon-2xl"></fa-icon></div>
             <div class="col-12 col-lg-5">
                 <div class="ms-4">Converted to</div>
-                <div class="my-3 p-4 bg-white d-flex rounded-pill position-relative border border-secondary">
-                    <input type="number" class="form-control me-2 h-150 rounded-5 d-flex align-items-center" [(ngModel)]="inputValue2" (input)="updateOriginalValue()">
-                    <div class="d-flex m-3">
-                        <div (click)="selectCurrencyToConvert()">
-                            <div class="d-flex ps-3 border-start border-secondary" *ngIf="exampleExchangeRateToConvert">
-                                <img
-                                *ngIf="exampleRatesWithFlag[0] && exampleRatesWithFlag[0].flagUrl"
-                                [src]="exampleRatesWithFlag[0].flagUrl"
-                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
-                                i18n-alt
-                                alt="Country flag"
-                                />
-                                <div *ngIf="exampleRatesWithFlag[1]" class="fw-bold ms-3">{{ exampleRatesWithFlag[0].rate.code }}</div>
-                            </div>
-                            <div *ngIf="!exampleExchangeRateToConvert" class="d-flex ps-3 border-start border-secondary">
-                                <img
-                                [src]="flagUrlToConvert"
-                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
-                                i18n-alt
-                                alt="Country flag"
-                                />
-                                <div class="fw-bold ms-3">{{ exchangeRateToConvertCode }}</div>
-                            </div>
-                        </div>
-                    </div>
-                    <div *ngIf="isClickedToConvert" class="dropdown">
-                        <div class="d-flex m-3 pb-3 border-bottom" *ngFor="let rate of ratesWithFlag">
-                            <div class="d-flex" (click)="clickedCurrencyToConvert(rate.rate.code)">
-                                <img
-                                class="flag"
-                                [src]="rate.flagUrl"
-                                onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
-                                i18n-alt
-                                alt="Country flag"
-                                />
-                                <div class="mx-4 fw-bold">{{ rate.rate.code }}</div> 
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <app-currency-input
+                    [exampleRateWithFlag]="exampleRateWithFlag"
+                    [ratesWithFlag]="ratesWithFlag"
+                    [inputValue]="inputValue2"
+                    (exchangeRateChange)="updateExchangeRate2($event)"
+                    [inputValue]="toValue"
+                    (valueChanged)="toValueChanged($event)"
+                ></app-currency-input>
             </div>
         </div>
     </div>

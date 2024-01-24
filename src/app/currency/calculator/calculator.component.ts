@@ -1,8 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CurrenciesRepository } from '../data/currencies-repository';
 import { RateWithFlag } from '../data/rate-with-flag';
-import { ExchangeRateService } from '../data/exchange-rate.service';
-import { FlagsService } from '../data/flags.service';
 import { IconDefinition, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
@@ -14,30 +12,28 @@ export class CalculatorComponent implements OnInit {
   ratesWithFlag: RateWithFlag[] = []
   exampleRatesWithFlag: RateWithFlag[] = []
 
-  exampleExchangeRate: boolean = true
-  exampleExchangeRateToConvert: boolean = true
+  fromCurrencyInputData: CurrencyInputData | undefined
+  toCurrencyInputData: CurrencyInputData | undefined
 
-  exchangeRateCode: string = ''
+  fromValue: number = 1
+  toValue: number = 0
+
+  exampleRateWithFlag!: RateWithFlag
+  secondExampleRateWithFlag!: RateWithFlag
+
   exchangeRateAmount!: number
-
-  exchangeRateToConvertCode: string = ''
   exchangeRateToConvert: number = 0
-
-  isClicked: boolean = false
-  isClickedToConvert: boolean = false
-
-  flagUrl: string = ''
-  flagUrlToConvert: string = ''
 
   inputValue1: number = 1
   inputValue2: number = 0
 
   arrowIcon: IconDefinition = faArrowRight
 
+  @Output() updateConvertedValueInput = new EventEmitter<number>()
+  @Output() updateOriginalValueInput = new EventEmitter<number>()
+
   constructor(
-    private currenciesRepository: CurrenciesRepository,
-    private exchangeRatesService: ExchangeRateService,
-    private flagsService: FlagsService
+    private currenciesRepository: CurrenciesRepository
   ) {}
 
   ngOnInit(): void {
@@ -48,45 +44,39 @@ export class CalculatorComponent implements OnInit {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.ratesWithFlag = rates
       this.exampleRatesWithFlag.push(rates[0], rates[1])
+      this.exampleRateWithFlag = this.exampleRatesWithFlag[0]
+      this.secondExampleRateWithFlag = this.exampleRatesWithFlag[1]
       this.exchangeRateToConvert = this.exampleRatesWithFlag[0].rate.mid
       this.exchangeRateAmount = this.exampleRatesWithFlag[1].rate.mid
-      this.updateConvertedValue()
+      this.fromValueChanged(this.inputValue1)
     });
   }
 
-  selectCurrency(): void {
-    this.isClicked = !this.isClicked
+  updateExchangeRate1(value: number) {
+    this.exchangeRateAmount = value
+    this.fromValueChanged(this.fromValue)
   }
 
-  selectCurrencyToConvert(): void {
-    this.isClickedToConvert = !this.isClickedToConvert
+  updateExchangeRate2(value: number) {
+    this.exchangeRateToConvert = value
+    this.toValueChanged(this.toValue)
   }
 
-  clickedCurrency(code: string) {
-    this.exchangeRateCode = code
-    this.exchangeRatesService.getExchangeRateForCode(code).subscribe(rate => this.exchangeRateAmount = rate)
-    this.exampleExchangeRate = false
-    const countryCode = this.currenciesRepository.getCountryCode(code)
-    this.flagUrl = this.flagsService.getFlagUrl(countryCode)
-    this.selectCurrency()
+  fromValueChanged(value: number) {
+    this.toValue = +(value * this.exchangeRateAmount / this.exchangeRateToConvert).toFixed(2)
   }
 
-  clickedCurrencyToConvert(code: string) {
-    this.exchangeRateToConvertCode = code
-    this.exchangeRatesService.getExchangeRateForCode(code).subscribe(rate => this.exchangeRateToConvert = rate)
-    this.exampleExchangeRateToConvert = false
-    const countryCode = this.currenciesRepository.getCountryCode(code)
-    this.flagUrlToConvert = this.flagsService.getFlagUrl(countryCode)
-    this.selectCurrencyToConvert()
+  toValueChanged(value: number) {
+    this.fromValue = +(value * this.exchangeRateToConvert / this.exchangeRateAmount).toFixed(2)
   }
+}
 
-  updateConvertedValue() {
-    console.log(this.inputValue2)
-    this.inputValue2 = +((this.inputValue1 * this.exchangeRateAmount) / this.exchangeRateToConvert).toFixed(2)
+export class CurrencyInputData {
+  value: number
+  rateWithFlag: RateWithFlag
+
+  constructor(value: number, rateWithFlag: RateWithFlag) {
+    this.value = value
+    this.rateWithFlag = rateWithFlag
   }
-
-  updateOriginalValue() {
-    this.inputValue1 = +((this.inputValue2 * this.exchangeRateToConvert) / this.exchangeRateAmount).toFixed(2)
-  }
-
 }

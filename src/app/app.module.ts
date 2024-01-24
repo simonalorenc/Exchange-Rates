@@ -21,6 +21,7 @@ import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
 import { CalculatorComponent } from './currency/calculator/calculator.component';
+import { CurrencyInputComponent } from './currency-input/currency-input.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { CalculatorComponent } from './currency/calculator/calculator.component'
     ChartFromLastMonthsComponent,
     ChartFromLastDaysComponent,
     CalculatorComponent,
+    CurrencyInputComponent,
   ],
   imports: [
     BrowserModule,
