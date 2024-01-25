@@ -1,8 +1,5 @@
 import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { RateWithFlag } from '../currency/data/rate-with-flag';
-import { CurrenciesRepository } from '../currency/data/currencies-repository';
-import { ExchangeRateService } from '../currency/data/exchange-rate.service';
-import { FlagsService } from '../currency/data/flags.service';
 import { IconDefinition } from '@fortawesome/free-regular-svg-icons';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
@@ -23,11 +20,7 @@ export class CurrencyInputComponent implements OnInit {
 
   arrowIcon: IconDefinition = faChevronDown
 
-  constructor(
-    private currenciesRepository: CurrenciesRepository,
-    private exchangeRatesService: ExchangeRateService,
-    private flagsService: FlagsService
-  ) {}
+  constructor() {}
 
   ngOnInit(): void {
   }
