@@ -15,7 +15,7 @@ export class NavbarRoutingService {
   }
 
   onClickCalculator(): void {
-    this.router.navigate(['/dashboard/calculator']);
+    this.router.navigate(['/dashboard/currency-converter']);
   }
 
   onClickGold(): void {

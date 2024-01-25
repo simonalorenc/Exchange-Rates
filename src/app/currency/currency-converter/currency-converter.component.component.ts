@@ -4,11 +4,11 @@ import { RateWithFlag } from '../data/rate-with-flag';
 import { IconDefinition, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
-  selector: 'app-calculator',
-  templateUrl: './calculator.component.html',
-  styleUrls: ['./calculator.component.scss']
+  selector: 'app-currency-converter',
+  templateUrl: './currency-converter.component.html',
+  styleUrls: ['./currency-converter.component.scss']
 })
-export class CalculatorComponent implements OnInit {
+export class CurrencyConverterComponent implements OnInit {
   fromCurrencyInputData!: CurrencyInputData
   toCurrencyInputData!: CurrencyInputData
 

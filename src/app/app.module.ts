@@ -20,7 +20,7 @@ import { CurrencyListComponent } from './currency/currency-list/currency-list.co
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
-import { CalculatorComponent } from './currency/calculator/calculator.component';
+import { CurrencyConverterComponent } from './currency/currency-converter/currency-converter.component.component';
 import { CurrencyInputComponent } from './currency-input/currency-input.component';
 
 @NgModule({
@@ -36,7 +36,7 @@ import { CurrencyInputComponent } from './currency-input/currency-input.componen
     ChartFromLastSevenDaysComponent,
     ChartFromLastMonthsComponent,
     ChartFromLastDaysComponent,
-    CalculatorComponent,
+    CurrencyConverterComponent,
     CurrencyInputComponent,
   ],
   imports: [

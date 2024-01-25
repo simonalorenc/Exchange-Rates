@@ -2,8 +2,9 @@
     <input type="number" class="form-control me-2 h-150 rounded-5" (input)="onValueChanged()" [(ngModel)]="inputValue">
     <div class="d-flex m-3 cursor">
         <div (click)="toggleList()">
-            <div class="d-flex ps-3 border-start border-secondary">
+            <div class="d-flex ps-3 border-start border-secondary" *ngIf="rateWithFlag">
                 <img
+                *ngIf="rateWithFlag.flagUrl"
                 [src]="rateWithFlag.flagUrl"
                 onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
                 i18n-alt
