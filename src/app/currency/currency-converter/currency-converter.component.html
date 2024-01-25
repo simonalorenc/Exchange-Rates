@@ -1,7 +1,7 @@
 <section class="section-variant"> 
     <div class="container pt-5">
         <div class="h2 pb-2">Currency Converter</div>
-        <div class="row mt-2 d-flex justify-content-center bg-white p-5 rounded-5 border border-warning">
+        <div class="row mt-2 d-flex justify-content-center bg-white p-5 rounded-5 border border-warning" *ngIf="ratesWithFlag.length > 0">
             <div class="col-12 col-lg-5">
                 <div class="ms-4">Amount</div>
                 <app-currency-input

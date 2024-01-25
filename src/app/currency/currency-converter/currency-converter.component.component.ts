@@ -9,7 +9,7 @@ import { IconDefinition, faArrowRight } from '@fortawesome/free-solid-svg-icons'
   styleUrls: ['./currency-converter.component.scss']
 })
 export class CurrencyConverterComponent implements OnInit {
-  fromCurrencyInputData!: CurrencyInputData
+  fromCurrencyInputData!: CurrencyInputData 
   toCurrencyInputData!: CurrencyInputData
 
   ratesWithFlag: RateWithFlag[] = []

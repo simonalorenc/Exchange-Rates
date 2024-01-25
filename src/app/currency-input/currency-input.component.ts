@@ -11,7 +11,7 @@ import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 export class CurrencyInputComponent implements OnInit {
   isListExpanded: boolean = false
 
-  @Input() rateWithFlag!: RateWithFlag
+  @Input() rateWithFlag: RateWithFlag | undefined
   @Input() ratesWithFlag: RateWithFlag[] = []
   @Input() inputValue: number = 1
 
@@ -36,7 +36,7 @@ export class CurrencyInputComponent implements OnInit {
   }
 
   updateExchangeRate() {
-    this.exchangeRateChange.emit(this.rateWithFlag.rate.mid)
+    this.exchangeRateChange.emit(this.rateWithFlag?.rate.mid)
   }
 
   onValueChanged() {
