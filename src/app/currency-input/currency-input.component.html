@@ -1,6 +1,6 @@
 <div class="my-3 p-4 bg-white d-flex rounded-pill border border-secondary position-relative">
     <input type="number" class="form-control me-2 h-150 rounded-5" (input)="onValueChanged()" [(ngModel)]="inputValue">
-    <div class="d-flex m-3">
+    <div class="d-flex m-3 cursor">
         <div (click)="toggleList()">
             <div class="d-flex ps-3 border-start border-secondary">
                 <img
@@ -10,6 +10,7 @@
                 alt="flag"
                 />
                 <div class="fw-bold ms-3">{{ rateWithFlag.rate.code }}</div>
+                <div class="ps-2" style="color: rgb(175, 175, 175)"><fa-icon [icon]="arrowIcon" class="fa-icon-2xl"></fa-icon></div>
             </div>
         </div>
     </div>
