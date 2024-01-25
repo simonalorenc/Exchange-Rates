@@ -4,7 +4,6 @@
         <div (click)="toggleList()">
             <div class="d-flex ps-3 border-start border-secondary" *ngIf="rateWithFlag">
                 <img
-                *ngIf="rateWithFlag.flagUrl"
                 [src]="rateWithFlag.flagUrl"
                 onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
                 i18n-alt
