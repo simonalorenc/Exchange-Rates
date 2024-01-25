@@ -17,7 +17,6 @@ export class ExchangeRateService {
   private BASE_URL: string = 'https://api.nbp.pl/api/exchangerates';
 
   private codeToTableMap: Map<string, string> = new Map<string, string>()
-  private codeToMapWithExchangeRates: Map<string, number> = new Map<string, number>
 
   constructor(private http: HttpClient) {
   }
@@ -34,10 +33,8 @@ export class ExchangeRateService {
       map(([resultA, resultB]) => {
         const ratesA = resultA[0].rates;
         this.addCodesToTableMap(resultA[0])
-        this.addExchangeRatesToMap(resultA[0])
         const ratesB = resultB[0].rates;
         this.addCodesToTableMap(resultB[0])
-        this.addExchangeRatesToMap(resultB[0])
         return [...ratesA, ...ratesB];
       })
     );
@@ -45,10 +42,6 @@ export class ExchangeRateService {
 
   private addCodesToTableMap(exchangeTable: ExchangeTableDto): void {
     exchangeTable.rates.forEach(rate => this.codeToTableMap.set(rate.code, exchangeTable.table))
-  }
-
-  private addExchangeRatesToMap(exchangeTable: ExchangeTableDto): void {
-    exchangeTable.rates.forEach(rate => this.codeToMapWithExchangeRates.set(rate.code, rate.mid))
   }
 
   getCurrencyExchangeTableDtoFromLastDays(code: string, days: number): Observable<CurrencyExchangeTableDto> {
@@ -76,41 +69,6 @@ export class ExchangeRateService {
       )
     }
   }
-
-  getExchangeRateForCode(code: string): Observable<number> {
-    let rate: number | undefined = this.codeToMapWithExchangeRates.get(code)
-    if(rate) {
-      return of(rate)
-    } else {
-      return this.getAllRateDtos().pipe(
-        map(() => {
-          rate = this.codeToMapWithExchangeRates.get(code)
-          if(!rate) {
-            throw new Error(`Exchange rate not found for code: ${code}`)
-          }
-          return rate
-        })
-      )
-    }
-  }
-
-  // getExchangeRateForCode(code: string): Observable<number> {
-  //   let rate: number | undefined = this.codeToMapWithExchangeRates.get(code)
-  //   if(rate) {
-  //     console.log(rate)
-  //     return of(rate)
-  //   } else {
-  //     return this.getAllRateDtos().pipe(
-  //       map(() => {
-  //         rate = this.codeToMapWithExchangeRates.get(code)
-  //         if(!rate) {
-  //           throw new Error(`Exchange rate not found for code: ${code}`)
-  //         }
-  //         return rate
-  //       })
-  //     )
-  //   }
-  // }
 
   getCurrencyExchangeTableDtoForDateRange(
     code: string,
