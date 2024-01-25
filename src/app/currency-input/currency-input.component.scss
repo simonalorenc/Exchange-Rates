@@ -1,0 +1,25 @@
+.dropdown {
+    position: absolute;
+    width: 200px;
+    top: 70px;
+    right: 0px;
+    background-color: white;
+    border: solid 1px rgb(199, 199, 199);
+    border-radius: 15px;
+    max-height: 400px;
+    overflow-y: scroll;
+    z-index: 1;
+}
+
+img {
+    width: 33.5px;
+    height: auto;
+}
+
+input {
+    border: none;
+}
+
+.arrow {
+    color: rgb(175, 175, 175);
+}

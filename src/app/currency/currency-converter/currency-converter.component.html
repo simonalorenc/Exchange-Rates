@@ -1,0 +1,29 @@
+<section class="section-variant"> 
+    <div class="container pt-5">
+        <div class="h2 pb-2">Currency Converter</div>
+        <div class="row mt-2 d-flex justify-content-center bg-white p-5 rounded-5 border border-warning" *ngIf="ratesWithFlag.length > 0">
+            <div class="col-12 col-lg-5">
+                <div class="ms-4">Amount</div>
+                <app-currency-input
+                    [rateWithFlag]="initFromRateWithFlag"
+                    [ratesWithFlag]="ratesWithFlag"
+                    (exchangeRateChange)="updateFromRate($event)"
+                    [inputValue]="fromCurrencyInputData.inputValue"
+                    (valueChanged)="fromValueChanged($event)"
+                ></app-currency-input>
+            </div>
+            <div class="col-2 d-flex justify-content-center align-items-center my-4"><fa-icon [icon]="arrowIcon" class="fa-icon-2xl"></fa-icon></div>
+            <div class="col-12 col-lg-5">
+                <div class="ms-4">Converted to</div>
+                <app-currency-input
+                    [rateWithFlag]="initToRateWithFlag"
+                    [ratesWithFlag]="ratesWithFlag"
+                    (exchangeRateChange)="updateToRate($event)"
+                    [inputValue]="toCurrencyInputData.inputValue"
+                    (valueChanged)="toValueChanged($event)"
+                ></app-currency-input>
+            </div>
+        </div>
+    </div>
+</section>
+

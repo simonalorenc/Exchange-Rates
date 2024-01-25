@@ -22,7 +22,6 @@ export class CurrencyListComponent implements OnInit {
   filterForm: FormGroup;
   isSortAlphabeticallyActive: boolean = false;
   sortAlphabeticallyIcon: IconDefinition = faArrowUpAZ;
-  sortPopulrityIcon: IconDefinition = faSort;
   emptyHeartIcon: IconDefinition = farHeart;
   fullHeartIcon: IconDefinition = fasHeart;
   isCollapsed: boolean = true

@@ -1,0 +1,45 @@
+<div
+  class="my-3 p-4 bg-white d-flex rounded-pill border border-secondary position-relative"
+>
+  <input
+    type="number"
+    class="form-control me-2 h-150 rounded-5"
+    (input)="onValueChanged()"
+    [(ngModel)]="inputValue"
+  />
+  <div class="d-flex m-3 cursor">
+    <div (click)="toggleList()">
+      <div
+        class="d-flex ps-3 border-start border-secondary"
+        *ngIf="rateWithFlag"
+      >
+        <img
+          [src]="rateWithFlag.flagUrl"
+          onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+          i18n-alt
+          alt="flag"
+        />
+        <div class="fw-bold ms-3">{{ rateWithFlag.rate.code }}</div>
+        <div class="ps-2 arrow">
+          <fa-icon [icon]="arrowIcon" class="fa-icon-2xl"></fa-icon>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="isListExpanded" class="dropdown">
+    <div
+      class="d-flex m-3 pb-3 border-bottom"
+      *ngFor="let rate of ratesWithFlag"
+    >
+      <div class="d-flex" (click)="clickedCurrency(rate)">
+        <img
+          [src]="rate.flagUrl"
+          onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
+          i18n-alt
+          alt="flag"
+        />
+        <div class="mx-4 fw-bold">{{ rate.rate.code }}</div>
+      </div>
+    </div>
+  </div>
+</div>

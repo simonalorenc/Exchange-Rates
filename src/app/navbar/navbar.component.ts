@@ -55,6 +55,11 @@ export class NavbarComponent implements OnInit{
     this.viewportScroller.scrollToPosition([0,0])
   }
 
+  onClickCalculator(): void {
+    this.navbarRoutingService.onClickCalculator()
+    this.viewportScroller.scrollToPosition([0,0])
+  }
+
   onClickGold(): void {
     this.navbarRoutingService.onClickGold()
     this.viewportScroller.scrollToPosition([0,0])

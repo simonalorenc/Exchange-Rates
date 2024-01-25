@@ -19,21 +19,21 @@
           [src]="flagUrl"
           onerror="this.onerror=null;this.src='assets/flag_placeholder.webp';"
           i18n-alt
-          alt="Country flag"/>
+          alt="Country flag"
+        />
       </div>
     </div>
   </div>
   <section class="section-variant">
     <div class="container">
       <h2 class="py-3" i18n>Exchange rates from the last days:</h2>
-      <div
-        class="card mb-2"
-        *ngFor="
-          let detailCurrency of detailCurrencyRates">
+      <div class="card mb-2" *ngFor="let detailCurrency of detailCurrencyRates">
         <div class="card-body d-flex align-items-center py-0">
           <div class="fw-bold">•</div>
           <div class="mx-5 flex-fill">{{ detailCurrency.date }}</div>
-          <div>{{ detailCurrency.mid !== -1 ? detailCurrency.mid : 'No data' }}</div>
+          <div>
+            {{ detailCurrency.mid !== -1 ? detailCurrency.mid : "No data" }}
+          </div>
         </div>
       </div>
       <div class="d-flex justify-content-center py-2">
@@ -44,7 +44,8 @@
                 class="page-link"
                 (click)="changePageToFirst()"
                 [class.disabled]="currentPage === 1"
-                aria-label="Previous">
+                aria-label="Previous"
+              >
                 <span aria-hidden="true">&laquo;</span>
               </a>
             </li>
@@ -53,20 +54,20 @@
                 class="page-link"
                 (click)="onPageChangePrevious()"
                 [class.disabled]="currentPage === 1"
-                aria-label="Previous">
+                aria-label="Previous"
+              >
                 <span aria-hidden="true">&lsaquo;</span>
               </a>
             </li>
             <li class="page-item">
-              <a
-                class="page-link"
-                >{{ currentPage }}</a>
+              <a class="page-link">{{ currentPage }}</a>
             </li>
             <li class="page-item">
               <a
                 class="page-link"
                 (click)="onPageChangeNext()"
-                aria-label="Next">
+                aria-label="Next"
+              >
                 <span aria-hidden="true">&rsaquo;</span>
               </a>
             </li>

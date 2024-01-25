@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ButtonComponent } from './button/button.component';
 import { GoldPricesComponent } from './gold-prices/gold-prices.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, NgModel, ReactiveFormsModule } from '@angular/forms';
 import { CurrencyDetailComponent } from './currency/currency-detail/currency-detail.component';
 import { NavbarComponent } from './navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -20,6 +20,8 @@ import { CurrencyListComponent } from './currency/currency-list/currency-list.co
 import { CollapseModule } from 'ngx-bootstrap/collapse';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
+import { CurrencyConverterComponent } from './currency/currency-converter/currency-converter.component.component';
+import { CurrencyInputComponent } from './currency-input/currency-input.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,9 @@ import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
     FooterComponent,
     ChartFromLastSevenDaysComponent,
     ChartFromLastMonthsComponent,
-    ChartFromLastDaysComponent
+    ChartFromLastDaysComponent,
+    CurrencyConverterComponent,
+    CurrencyInputComponent,
   ],
   imports: [
     BrowserModule,
