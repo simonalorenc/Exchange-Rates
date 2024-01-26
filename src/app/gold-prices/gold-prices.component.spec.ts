@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { GoldPricesComponent } from './gold-prices.component';
 import { DatesService } from '../dates.service';
 import { GoldPriceService } from './data/gold-price.service';
+import { of } from 'rxjs';
 
 describe('GoldPricesComponent', () => {
   let component: GoldPricesComponent;
@@ -11,6 +12,8 @@ describe('GoldPricesComponent', () => {
   let datesServiceSpy = jasmine.createSpyObj('DatesService', ['getStartAndEndDate', 'getFormattedDate']);
 
   beforeEach(() => {
+    datesServiceSpy.getStartAndEndDate.and.returnValue(['', ''])
+    goldPricesServiceSpy.getGoldPricesDtoFromRangeTime.and.returnValue(of([]))
     TestBed.configureTestingModule({
       declarations: [GoldPricesComponent],
       providers: [

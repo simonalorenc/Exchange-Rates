@@ -22,6 +22,7 @@ export class GoldPricesComponent implements OnInit {
     this.getGoldPricesFromLastDays()
   }
 
+  //TODO poprawic w serwisie
   getGoldPricesFromLastDays(): void {
     this.dates = this.datesService.getStartAndEndDate(13)
     this.displayGoldPrices()

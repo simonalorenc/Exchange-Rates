@@ -8,23 +8,24 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ViewportScroller } from '@angular/common';
+import { of } from 'rxjs';
 
 describe('CurrencyListComponent', () => {
   let component: CurrencyListComponent;
   let fixture: ComponentFixture<CurrencyListComponent>;
   let currenciesRepositorySpy = jasmine.createSpyObj('CurrenciesRepository', ['getRatesWithFlags']);
-  let formBuilderSpy = jasmine.createSpyObj('FormBuilder', ['group']);
   let routerSpy = jasmine.createSpyObj('Router', ['navigate']);
   let currencyTranslationServiceSpy = jasmine.createSpyObj('CurrencyTranslationService', ['getRateWithFlagForLocale']);
   let viewPortScrollerSpy = jasmine.createSpyObj('ViewportScroller', ['scrollToPosition']);
   let favouritesRatesServiceSpy = jasmine.createSpyObj('FavouritesRatesService', ['checkFavourites', 'addToFavourites', 'removeFromFavourites']);
 
   beforeEach(() => {
+    currenciesRepositorySpy.getRatesWithFlags.and.returnValue(of([]));
     TestBed.configureTestingModule({
       declarations: [CurrencyListComponent],
       providers: [
         { provide: CurrenciesRepository, useValue: currenciesRepositorySpy },
-        { provide: FormBuilder, useValue: formBuilderSpy },
+        FormBuilder,
         { provide: Router, useValue: routerSpy },
         { provide: CurrencyTranslationService, useValue: currencyTranslationServiceSpy },
         { provide: ViewportScroller, useValue: viewPortScrollerSpy },

@@ -7,42 +7,71 @@ import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 import { FlagsService } from '../data/flags.service';
 import { ExchangeRateService } from '../data/exchange-rate.service';
 import { DatesService } from 'src/app/dates.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { ViewportScroller } from '@angular/common';
+import { Observable, of } from 'rxjs';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('CurrencyDetailComponent', () => {
   let component: CurrencyDetailComponent;
   let fixture: ComponentFixture<CurrencyDetailComponent>;
-  let activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', ['get']);
-  let exchangeRateServiceSpy = jasmine.createSpyObj('ExchangeRateService', ['getCurrencyExchangeTableDtoForDateRange']);
+  let activatedRouteSpy = jasmine.createSpyObj('ActivatedRoute', [
+    'get',
+    'snapshot',
+  ]);
+  let routerSpy = jasmine.createSpyObj('Router', ['navigate']);
+  let exchangeRateServiceSpy = jasmine.createSpyObj('ExchangeRateService', [
+    'getCurrencyExchangeTableDtoForDateRange',
+  ]);
   let flagsServiceSpy = jasmine.createSpyObj('FlagsService', ['getFlagUrl']);
-  let currenciesRepositorySpy = jasmine.createSpyObj('CurrenciesRepository', ['getCountryCode']);
-  let currencyTranslationServiceSpy = jasmine.createSpyObj('CurrencyTranslationService', ['updateDetailCurrency']);
-  let favouritesRatesServiceSpy = jasmine.createSpyObj('FavouritesRatesService', ['checkIfRateIsInFavourites', 'removeFromFavourites', 'addToFavourites']);
-  let datesServiceSpy = jasmine.createSpyObj('DatesService', ['getStartAndEndDate', 'getAllFormattedDatesBetweenRange', 'getFormattedDate']);
-
-  // private route: ActivatedRoute,
-  //   private exchangeRateService: ExchangeRateService,
-  //   private flagsService: FlagsService,
-  //   private currenciesRepository: CurrenciesRepository,
-  //   private router: Router,
-  //   @Inject(LOCALE_ID) public locale: string,
-  //   private currencyTranslationService: CurrencyTranslationService,
-  //   private favouritesRatesService: FavouritesRatesService,
-  //   private viewportScroller: ViewportScroller,
-  //   private datesService: DatesService
+  let currenciesRepositorySpy = jasmine.createSpyObj('CurrenciesRepository', [
+    'getCountryCode',
+  ]);
+  let currencyTranslationServiceSpy = jasmine.createSpyObj(
+    'CurrencyTranslationService',
+    ['updateDetailCurrency']
+  );
+  let favouritesRatesServiceSpy = jasmine.createSpyObj(
+    'FavouritesRatesService',
+    ['checkIfRateIsInFavourites', 'removeFromFavourites', 'addToFavourites']
+  );
+  let datesServiceSpy = jasmine.createSpyObj('DatesService', [
+    'getStartAndEndDate',
+    'getAllFormattedDatesBetweenRange',
+    'getFormattedDate',
+  ]);
+  let viewportScrolleSpy = jasmine.createSpyObj('ViewportScroller', [
+    'scrollToAnchor',
+  ]);
 
   beforeEach(() => {
+    datesServiceSpy.getStartAndEndDate.and.returnValue([])
+    exchangeRateServiceSpy.getCurrencyExchangeTableDtoForDateRange.and.returnValue(of([]))
+    activatedRouteSpy.snapshot = {
+      paramMap: {
+        get: (key: string) => 'some-value', // Mocking paramMap
+      },
+    };
     TestBed.configureTestingModule({
       declarations: [CurrencyDetailComponent],
       providers: [
         { provide: ActivatedRoute, useValue: activatedRouteSpy },
+        { provide: Router, useValue: routerSpy },
         { provide: ExchangeRateService, useValue: exchangeRateServiceSpy },
         { provide: FlagsService, useValue: flagsServiceSpy },
         { provide: CurrenciesRepository, useValue: currenciesRepositorySpy },
-        { provide: CurrencyTranslationService, useValue: currencyTranslationServiceSpy },
-        { provide: FavouritesRatesService, useValue: favouritesRatesServiceSpy },
+        {
+          provide: CurrencyTranslationService,
+          useValue: currencyTranslationServiceSpy,
+        },
+        {
+          provide: FavouritesRatesService,
+          useValue: favouritesRatesServiceSpy,
+        },
         { provide: DatesService, useValue: datesServiceSpy },
+        { provide: ViewportScroller, useValue: viewportScrolleSpy },
       ],
+      schemas: [NO_ERRORS_SCHEMA]
     });
     fixture = TestBed.createComponent(CurrencyDetailComponent);
     component = fixture.componentInstance;
