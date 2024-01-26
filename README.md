@@ -30,7 +30,3 @@ Tech stack:
   src="src/assets/screenshots/mobile_detail.png"
   width="300px">    
 </p>
-
-## To do
-
-- add a currency calculator
