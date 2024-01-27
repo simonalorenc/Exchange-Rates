@@ -5,7 +5,7 @@ import { RateWithFlag } from './currency/data/rate-with-flag';
   providedIn: 'root',
 })
 export class FavouritesRatesService {
-  FAVOURITES_KEY: string = 'codes'
+  private FAVOURITES_KEY: string = 'codes'
 
   private getStoredRates(): string[] {
     let storedRates: string[] | null = JSON.parse(localStorage.getItem(this.FAVOURITES_KEY) || 'null');
