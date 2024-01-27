@@ -13,4 +13,10 @@ describe('FlagsService', () => {
   it('should be created', () => {
     expect(service).toBeTruthy();
   });
+
+  it('should generate valid flag url', () => {
+    const countryCode = 'eu'
+    const result = service.getFlagUrl(countryCode)
+    expect(result).toEqual('https://flagcdn.com/w160/eu.webp')
+  });
 });
