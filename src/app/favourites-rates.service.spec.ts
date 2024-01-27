@@ -1,6 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 
 import { FavouritesRatesService } from './favourites-rates.service';
+import { RateWithFlag } from './currency/data/rate-with-flag';
 
 describe('FavouritesRatesService', () => {
   let service: FavouritesRatesService;
@@ -13,7 +14,7 @@ describe('FavouritesRatesService', () => {
       return JSON.stringify(['eur', 'thb']);
     });
 
-    spyOn(localStorage, 'setItem').and.callThrough()
+    spyOn(localStorage, 'setItem').and.callThrough();
   });
 
   it('should add code to favourites', () => {
@@ -31,9 +32,9 @@ describe('FavouritesRatesService', () => {
 
   it('should remove code from favourites', () => {
     const codeToRemove = 'thb';
-    
+
     service.removeFromFavourites(codeToRemove);
-    
+
     const expectedStoredRates = JSON.stringify(['eur']);
     expect(localStorage.setItem).toHaveBeenCalledOnceWith(
       'codes',
@@ -42,20 +43,44 @@ describe('FavouritesRatesService', () => {
   });
 
   it('should check if code is in favourite and return true', () => {
-    const code = 'thb'
+    const code = 'thb';
 
-    const result = service.checkIfRateIsInFavourites(code)
+    const result = service.checkIfRateIsInFavourites(code);
 
-    expect(result).toBeTrue()
+    expect(result).toBeTrue();
   });
 
   it('should check if code is in favourite and return false', () => {
-    const code = 'pln'
+    const code = 'pln';
 
-    const result = service.checkIfRateIsInFavourites(code)
+    const result = service.checkIfRateIsInFavourites(code);
 
-    expect(result).toBeFalse()
+    expect(result).toBeFalse();
   });
 
-  
+  it('should check favourites', () => {
+    const eurRateWithFlag = new RateWithFlag(
+      {
+        currency: 'euro',
+        code: 'eur',
+        mid: 4,
+      },
+      '',
+      false
+    );
+    const cadRateWithFlag = new RateWithFlag(
+      {
+        currency: 'canadian dollar',
+        code: 'cad',
+        mid: 2,
+      },
+      '',
+      false
+    );
+    const ratesWithFlag: RateWithFlag[] = [eurRateWithFlag, cadRateWithFlag];
+
+    service.checkFavourites(ratesWithFlag);
+
+    expect(ratesWithFlag[1].isAddedToFavourite).toBeFalse();
+  });
 });
