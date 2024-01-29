@@ -70,8 +70,8 @@ describe('FavouritesRatesService', () => {
     );
     const cadRateWithFlag = new RateWithFlag(
       {
-        currency: 'canadian dollar',
-        code: 'cad',
+        currency: 'polski złoty',
+        code: 'pln',
         mid: 2,
       },
       '',
@@ -81,6 +81,7 @@ describe('FavouritesRatesService', () => {
 
     service.checkFavourites(ratesWithFlag);
 
+    expect(ratesWithFlag[0].isAddedToFavourite).toBeTrue();
     expect(ratesWithFlag[1].isAddedToFavourite).toBeFalse();
   });
 });

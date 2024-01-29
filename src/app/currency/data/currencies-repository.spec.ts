@@ -18,7 +18,9 @@ describe('CurrenciesRepository', () => {
     repository = TestBed.inject(CurrenciesRepository);
   });
   
-  it('should create an instance', () => {
-    expect(repository).toBeTruthy();
+  it('should return country code', () => {
+    const currencyCode = 'eur'
+    const countryCode = repository.getCountryCode(currencyCode)
+    expect(countryCode).toEqual('eu');
   });
 });
