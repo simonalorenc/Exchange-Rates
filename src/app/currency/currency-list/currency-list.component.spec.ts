@@ -20,7 +20,6 @@ describe('CurrencyListComponent', () => {
   let favouritesRatesServiceSpy = jasmine.createSpyObj('FavouritesRatesService', ['checkFavourites', 'addToFavourites', 'removeFromFavourites']);
 
   beforeEach(() => {
-    currenciesRepositorySpy.getRatesWithFlags.and.returnValue(of([]));
     TestBed.configureTestingModule({
       declarations: [CurrencyListComponent],
       providers: [
@@ -35,10 +34,26 @@ describe('CurrencyListComponent', () => {
     });
     fixture = TestBed.createComponent(CurrencyListComponent);
     component = fixture.componentInstance;
+
+    currenciesRepositorySpy.getRatesWithFlags.and.returnValue(of([]));
+    const exampleLocalStorageValue = 'true'
+    spyOn(localStorage, 'getItem').and.callFake(() => {
+      return exampleLocalStorageValue;
+    });
+
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should set isSortAlphabeticallyActive on ngOnInit', () => {
+    expect(component.isSortAlphabeticallyActive).toBeTrue();
+    expect(localStorage.getItem).toHaveBeenCalledOnceWith('sortAlphabetically');
   });
+
+  it('should change isCollapde on toggle', () => {
+    expect(component.isCollapsed).toBeTrue()
+    component.toggleCollapse()
+    expect(component.isCollapsed).toBeFalse()
+    component.toggleCollapse()
+    expect(component.isCollapsed).toBeTrue()
+  })
 });

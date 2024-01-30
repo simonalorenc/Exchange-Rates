@@ -78,7 +78,29 @@ describe('CurrencyDetailComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
-    expect(component).toBeTruthy();
+  it('should change to next page', () => {
+
+    spyOn(component, 'onPageChangeNext').and.callFake(() => {
+      component.currentPage = 7
+      component.currentPage = component.currentPage + 1
+      return component.currentPage
+    })
+
+    component.onPageChangeNext()
+
+    expect(component.currentPage).toEqual(8);
+  });
+
+  it('should change to previous page', () => {
+
+    spyOn(component, 'onPageChangePrevious').and.callFake(() => {
+      component.currentPage = 7
+      component.currentPage = component.currentPage - 1
+      return component.currentPage
+    })
+
+    component.onPageChangePrevious()
+
+    expect(component.currentPage).toEqual(6);
   });
 });
