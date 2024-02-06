@@ -57,12 +57,12 @@ export class CurrencyConverterComponent implements OnInit {
     this.toValueChanged(this.toCurrencyInputData.inputValue)
   }
 
-  fromValueChanged(value: number) {
-    this.toCurrencyInputData.inputValue = +(value * this.fromCurrencyInputData.rateValue / this.toCurrencyInputData.rateValue).toFixed(4)
+  fromValueChanged(value: number): number {
+    return this.toCurrencyInputData.inputValue = +(value * this.fromCurrencyInputData.rateValue / this.toCurrencyInputData.rateValue).toFixed(4)
   }
 
-  toValueChanged(value: number) {
-    this.fromCurrencyInputData.inputValue = +(value * this.toCurrencyInputData.rateValue / this.fromCurrencyInputData.rateValue).toFixed(4)
+  toValueChanged(value: number): number {
+     return this.fromCurrencyInputData.inputValue = +(value * this.toCurrencyInputData.rateValue / this.fromCurrencyInputData.rateValue).toFixed(4)
   }
 }
 
