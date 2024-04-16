@@ -8,9 +8,11 @@ import { ChartFromLastMonthsComponent } from '../charts/chart-from-last-months/c
 import { CurrencyListComponent } from '../currency/currency-list/currency-list.component';
 import { ChartFromLastDaysComponent } from '../charts/chart-from-last-days/chart-from-last-days.component';
 import { CurrencyConverterComponent } from '../currency/currency-converter/currency-converter.component.component';
+import { LogInComponent } from '../log-in/log-in.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard/currency-list', pathMatch: 'full' },
+  { path: 'log-in', component: LogInComponent},
   { path: 'dashboard', component: DashboardComponent,
     children: [
       { path: 'currency-list', component: CurrencyListComponent },

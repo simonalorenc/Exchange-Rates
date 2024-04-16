@@ -22,6 +22,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
 import { CurrencyConverterComponent } from './currency/currency-converter/currency-converter.component.component';
 import { CurrencyInputComponent } from './currency-input/currency-input.component';
+import { LogInComponent } from './log-in/log-in.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import { CurrencyInputComponent } from './currency-input/currency-input.componen
     ChartFromLastDaysComponent,
     CurrencyConverterComponent,
     CurrencyInputComponent,
+    LogInComponent,
   ],
   imports: [
     BrowserModule,

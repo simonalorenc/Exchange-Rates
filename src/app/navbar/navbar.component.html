@@ -10,7 +10,7 @@
       </div>
     </div>
     <div
-      class="collapse navbar-collapse"
+      class="collapse navbar-collapse justify-content-between"
       [collapse]="isCollapsed"
       [isAnimated]="true"
     >
@@ -41,6 +41,10 @@
           i18n
           >Gold</a
         >
+      </div>
+      <div class="navbar-nav text-center">
+        <a [routerLink]="['/log-in']" class="nav-link">Log in</a>
+        <a class="nav-link">Register</a>
       </div>
     </div>
   </div>
