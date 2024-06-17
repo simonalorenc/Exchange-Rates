@@ -1,0 +1,48 @@
+<section class="section-variant mt-5 align-items-center"> 
+    <div class="pt-5 log-in-container d-flex justify-content-center">
+        <div class="row mt-2 d-flex justify-content-center bg-white p-5 rounded-5 border border-warning">
+            <div class="h2 pb-2">Register</div>
+                <form class="mt-5" [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+                    <div class="d-flex flex-column">
+                        <label for="firstname" class="mt-1">Firstname:</label>
+                        <input id="firstname" type="text" class="mt-2 py-1 px-3 rounded-5 border border-warning" formControlName="firstname">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label for="lastname" class="mt-1">Lastname:</label>
+                        <input id="lastname" type="text" class="mt-2 py-1 px-3 rounded-5 border border-warning" formControlName="lastname">
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label for="e-mail" class="mt-1">E-mail:</label>
+                        <input id="e-mail" type="text" class="mt-2 py-1 px-3 rounded-5 border border-warning" formControlName="e-mail">
+                    </div>
+                    <div *ngIf="!registerForm.get('e-mail')?.valid && registerForm.get('e-mail')?.touched" class="text-danger small">
+                        <div *ngIf="registerForm.get('e-mail')?.errors?.['required']">
+                            E-mail is required!
+                        </div>
+                        <div *ngIf="registerForm.get('e-mail')?.errors?.['email']">
+                            Invalid e-mail format!
+                        </div>
+                    </div>
+                    <div class="d-flex flex-column">
+                        <label for="password" class="mt-1">Password:</label>
+                        <input id="password" type="password" class="mt-2 py-1 px-3 rounded-5 border border-warning" formControlName="password">
+                    </div>
+                    <div *ngIf="!registerForm.get('password')?.valid && registerForm.get('password')?.touched" class="text-danger small">
+                        <div *ngIf="registerForm.get('password')?.errors?.['required']">
+                            Password is required!
+                        </div>
+                        <div *ngIf="registerForm.get('password')?.errors?.['minlength']">
+                            Minimum length 6 characters
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center mt-5">
+                        <button
+                        type="submit"
+                        class="btn rounded-5 btn-primary">
+                            REGISTER
+                        </button>
+                    </div>
+                </form>
+        </div>
+    </div>
+</section>

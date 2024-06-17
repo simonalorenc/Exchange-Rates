@@ -23,6 +23,7 @@ import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
 import { CurrencyConverterComponent } from './currency/currency-converter/currency-converter.component.component';
 import { CurrencyInputComponent } from './currency-input/currency-input.component';
 import { LogInComponent } from './log-in/log-in.component';
+import { RegisterComponent } from './register/register.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { LogInComponent } from './log-in/log-in.component';
     CurrencyConverterComponent,
     CurrencyInputComponent,
     LogInComponent,
+    RegisterComponent,
   ],
   imports: [
     BrowserModule,

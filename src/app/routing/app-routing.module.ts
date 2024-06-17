@@ -9,10 +9,12 @@ import { CurrencyListComponent } from '../currency/currency-list/currency-list.c
 import { ChartFromLastDaysComponent } from '../charts/chart-from-last-days/chart-from-last-days.component';
 import { CurrencyConverterComponent } from '../currency/currency-converter/currency-converter.component.component';
 import { LogInComponent } from '../log-in/log-in.component';
+import { RegisterComponent } from '../register/register.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/dashboard/currency-list', pathMatch: 'full' },
   { path: 'log-in', component: LogInComponent},
+  { path: 'register', component: RegisterComponent},
   { path: 'dashboard', component: DashboardComponent,
     children: [
       { path: 'currency-list', component: CurrencyListComponent },
