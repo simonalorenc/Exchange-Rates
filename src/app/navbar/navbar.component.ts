@@ -4,6 +4,7 @@ import { IconDefinition, faBars } from '@fortawesome/free-solid-svg-icons';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
 import { ViewportScroller } from '@angular/common';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -18,17 +19,22 @@ import { ViewportScroller } from '@angular/common';
   ]
 })
 export class NavbarComponent implements OnInit{
-  private TRANSPARENT_SCROLL_OFFSET: number = 40
+  private TRANSPARENT_SCROLL_OFFSET: number = 40;
+  isUserLogged!: boolean;
   isTransparent: boolean = true
   isCurrenciesActive: boolean = false
   isCollapsed = true;
   toggleIcon: IconDefinition = faBars;
 
-  constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller) {}
+  constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller, private authService: AuthService) {}
 
   ngOnInit(): void {
-    
-   }
+    this.authService.isLoggedObservable().subscribe(
+      res => {
+        this.isUserLogged = res;
+      }
+    )
+  }
 
   toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed
@@ -63,5 +69,9 @@ export class NavbarComponent implements OnInit{
   onClickGold(): void {
     this.navbarRoutingService.onClickGold()
     this.viewportScroller.scrollToPosition([0,0])
+  }
+
+  public logout(): void {
+    this.authService.removeToken();
   }
 }
