@@ -1,5 +1,18 @@
 <section class="section-variant py-4">
   <div class="container">
+
+    <ng-template #template>
+      <div class="modal-body d-flex flex-row justify-content-between">
+        <div>
+          {{ loginInfo }}
+
+        </div>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </ng-template>
+
     <form [formGroup]="filterForm" class="d-flex">
       <input
         formControlName="filterInputValue"
@@ -54,7 +67,8 @@
                   class="far-regular custom-color" 
                   *ngIf="currency.isAddedToFavourite === false"
                   [icon]="emptyHeartIcon" 
-                  (click)="addToFavourite(currency.rate.code, $event)"></fa-icon>
+                  (click)="addToFavourite(currency.rate.code, $event, template)"
+                ></fa-icon>
                 <fa-icon  
                   class="far-regular custom-color" 
                   *ngIf="currency.isAddedToFavourite === true"

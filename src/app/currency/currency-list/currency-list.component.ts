@@ -1,13 +1,15 @@
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CurrenciesRepository } from '../data/currencies-repository';
 import { RateWithFlag } from '../data/rate-with-flag';
 import { Router } from '@angular/router';
-import { IconDefinition, faArrowUpAZ, faSort, faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition, faArrowUpAZ, faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CurrencyTranslationService } from '../data/currency.translation.service';
 import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 import { ViewportScroller } from '@angular/common';
+import { AuthService } from 'src/app/auth.service';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-currency-list',
@@ -16,6 +18,7 @@ import { ViewportScroller } from '@angular/common';
 })
 export class CurrencyListComponent implements OnInit {
   private SORT_KEY: string = 'sortAlphabetically'
+  modalRef!: BsModalRef;
 
   private initialRatesWithFlag: RateWithFlag[] = []
   ratesWithFlag: RateWithFlag[] = [];
@@ -24,7 +27,10 @@ export class CurrencyListComponent implements OnInit {
   sortAlphabeticallyIcon: IconDefinition = faArrowUpAZ;
   emptyHeartIcon: IconDefinition = farHeart;
   fullHeartIcon: IconDefinition = fasHeart;
-  isCollapsed: boolean = true
+  isCollapsed: boolean = true;
+  isLogged: boolean = false;
+  isHeartClicked: boolean = false;
+  loginInfo: string = 'Login to add to favourites!';
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
@@ -33,8 +39,13 @@ export class CurrencyListComponent implements OnInit {
     private currencyTranslationService: CurrencyTranslationService,
     private viewPortScroller: ViewportScroller,
     private favouritesRatesService: FavouritesRatesService,
+    private authService: AuthService,
+    private modalService: BsModalService,
     @Inject(LOCALE_ID) public locale: string //TODO public?
   ) {
+    this.authService.isLoggedObservable().subscribe(
+      res => this.isLogged = res
+    )
     this.filterForm = this.formBuilder.group({
       filterInputValue: [''],
     });
@@ -49,7 +60,7 @@ export class CurrencyListComponent implements OnInit {
     this.getRatesWithFlags();
   }
 
-  private filterByInputValue() {
+  private filterByInputValue(): void {
     this.filterForm.get('filterInputValue')?.valueChanges.subscribe((value) => {
       this.filterAndSortRatesWithFlags()
     });
@@ -119,23 +130,38 @@ export class CurrencyListComponent implements OnInit {
     this.viewPortScroller.scrollToPosition([0, 0])
   }
 
-  addToFavourite(code: string, event: Event): void {
-    event.stopPropagation()
-    const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
-    if(foundRate) {
-      foundRate.isAddedToFavourite = true
+  openModal(template: TemplateRef<any>) {
+    if (!this.isLogged) {
+      this.modalRef = this.modalService.show(template);
     }
-    this.favouritesRatesService.addToFavourites(code)
-    this.filterAndSortRatesWithFlags()
+  }
+
+  addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
+    this.isHeartClicked = !this.isHeartClicked
+    console.log(this.isLogged)
+    console.log(this.isHeartClicked)
+    event.stopPropagation()
+    if (this.isLogged) {
+      const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
+      if(foundRate) {
+        foundRate.isAddedToFavourite = true
+      }
+      this.favouritesRatesService.addToFavourites(code)
+      this.filterAndSortRatesWithFlags()
+    } else {
+      this.modalRef = this.modalService.show(template);
+    }
   }
 
   removeFromFavourite(code: string, event: Event): void {
     event.stopPropagation()
-    const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
-    if(foundRate) {
-      foundRate.isAddedToFavourite = false
+    if (this.isLogged) {
+      const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
+      if(foundRate) {
+        foundRate.isAddedToFavourite = false
+      }
+      this.favouritesRatesService.removeFromFavourites(code)
+      this.filterAndSortRatesWithFlags()
     }
-    this.favouritesRatesService.removeFromFavourites(code)
-    this.filterAndSortRatesWithFlags()
   }
 }

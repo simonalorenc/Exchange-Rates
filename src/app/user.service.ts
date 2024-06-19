@@ -18,4 +18,8 @@ export class UserService {
   public loginUser(user: UserToLogin): Observable<string> {
     return this.http.post<string>(`${this.userServerUrl}/auth/login`, user);
   }
+
+  public addCurrency(email: string, currency: string) {
+
+  }
 }

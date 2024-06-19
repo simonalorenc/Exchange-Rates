@@ -11,7 +11,7 @@ import { AuthService } from '../auth.service';
 })
 export class RegisterComponent implements OnInit{
   registerForm!: FormGroup;
-  user: User = { firstname: '', lastname: '', email: '', password: '' };
+  user: User = { firstname: '', lastname: '', email: '', password: '', currencies: [] };
   error: string = '';
   
   constructor(private fb: FormBuilder, private userService: UserService, private authService: AuthService) {}

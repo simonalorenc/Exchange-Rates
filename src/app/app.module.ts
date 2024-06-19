@@ -24,6 +24,7 @@ import { CurrencyConverterComponent } from './currency/currency-converter/curren
 import { CurrencyInputComponent } from './currency-input/currency-input.component';
 import { LogInComponent } from './log-in/log-in.component';
 import { RegisterComponent } from './register/register.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { RegisterComponent } from './register/register.component';
     BrowserAnimationsModule,
     NgChartsModule,
     CollapseModule.forRoot(),
-    FontAwesomeModule
+    FontAwesomeModule,
+    ModalModule.forRoot()
   ],
   providers: [
     {provide : LocationStrategy , useClass: HashLocationStrategy}
