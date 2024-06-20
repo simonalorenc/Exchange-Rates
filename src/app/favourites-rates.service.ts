@@ -1,44 +1,83 @@
 import { Injectable } from '@angular/core';
 import { RateWithFlag } from './currency/data/rate-with-flag';
+import { AuthService } from './auth.service';
+import { UserService } from './user.service';
+import { Observable, catchError, of, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FavouritesRatesService {
-  private FAVOURITES_KEY: string = 'codes'
+  userFavouritesRates: string[] = [];  
 
-  private getStoredRates(): string[] {
-    let storedRates: string[] | null = JSON.parse(localStorage.getItem(this.FAVOURITES_KEY) || 'null');
-      if (storedRates === null) {
-        storedRates = [];
+  constructor(private authService: AuthService, private userService: UserService) {
+    
+  }
+
+  private getStoredRatesObservable(): Observable<string[]> {
+    let jwtToken = this.authService.getToken();
+    if (!jwtToken) {
+      return of([]);
+    }
+    return this.userService.getUserCurrencies(jwtToken).pipe(
+      switchMap(res => {
+        if (res !== null) {
+          this.userFavouritesRates = res;
+        }
+        return of(this.userFavouritesRates);
+      }),
+      catchError(() => {
+        return of([]);
+      })
+    )
+  }
+
+  public getStoredRates(): void {
+    this.getStoredRatesObservable().subscribe(
+      res => {
+        this.userFavouritesRates = res;
       }
-    return storedRates
+    )
   }
 
   addToFavourites(code: string): void {
-    const storedRates = this.getStoredRates()
-    storedRates.push(code);
-    localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(storedRates))
-  }
-
-  removeFromFavourites(code: string): void {
-    let storedRates = this.getStoredRates()
-    storedRates = storedRates.filter((el) => el !== code);
-    localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(storedRates));
-  }
-
-  checkFavourites(ratesWithFlag: RateWithFlag[]) {
-    const favouriteRatesJson = localStorage[this.FAVOURITES_KEY];
-    if (favouriteRatesJson) {
-      const favouriteRates: string[] = JSON.parse(favouriteRatesJson)
-      ratesWithFlag.forEach(rateWithFlag => {
-        rateWithFlag.isAddedToFavourite = favouriteRates.includes(rateWithFlag.rate.code)
-      })
+    this.getStoredRates();
+    let jwtToken = this.authService.getToken();
+    if (jwtToken) {
+      this.userService.addCurrency(code, jwtToken).subscribe(
+        () => {
+          this.userFavouritesRates.push(code);
+        }
+      )
     }
   }
 
+  removeFromFavourites(code: string): void {
+    let jwtToken = this.authService.getToken();
+    if (jwtToken) {
+      this.userService.deleteCurrency(code, jwtToken).subscribe(
+        res => {
+          this.userFavouritesRates = this.userFavouritesRates.filter((el) => el !== code);
+        }
+      )
+    }
+  }
+
+  checkFavourites(ratesWithFlag: RateWithFlag[]) {
+    this.getStoredRatesObservable().subscribe(
+      res => {
+        this.userFavouritesRates = res;
+        if (this.userFavouritesRates) {
+          ratesWithFlag.forEach(rateWithFlag => {
+          rateWithFlag.isAddedToFavourite = this.userFavouritesRates.includes(rateWithFlag.rate.code);
+          })
+        }
+      }
+    );
+  }
+
   checkIfRateIsInFavourites(code: string): boolean {
-    const favouriteRates = this.getStoredRates()
-    return favouriteRates.includes(code)
+    this.getStoredRates()
+    return this.userFavouritesRates.includes(code)
   }
 }

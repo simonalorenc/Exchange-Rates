@@ -1,4 +1,4 @@
-import { Component, Inject, LOCALE_ID, OnInit, TemplateRef } from '@angular/core';
+import { Component, DoCheck, Inject, LOCALE_ID, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CurrenciesRepository } from '../data/currencies-repository';
 import { RateWithFlag } from '../data/rate-with-flag';
@@ -10,13 +10,14 @@ import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 import { ViewportScroller } from '@angular/common';
 import { AuthService } from 'src/app/auth.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-currency-list',
   templateUrl: './currency-list.component.html',
   styleUrls: ['./currency-list.component.scss'],
 })
-export class CurrencyListComponent implements OnInit {
+export class CurrencyListComponent implements OnInit, OnDestroy {
   private SORT_KEY: string = 'sortAlphabetically'
   modalRef!: BsModalRef;
 
@@ -31,6 +32,7 @@ export class CurrencyListComponent implements OnInit {
   isLogged: boolean = false;
   isHeartClicked: boolean = false;
   loginInfo: string = 'Login to add to favourites!';
+  private isLoggedSubscription!: Subscription;
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
@@ -53,11 +55,22 @@ export class CurrencyListComponent implements OnInit {
 
   ngOnInit(): void {
     const sortType = localStorage.getItem(this.SORT_KEY)
+    this.isLoggedSubscription = this.authService.isLoggedObservable().subscribe(
+      (isLogged) => {
+        this.isLogged = isLogged;
+        this.getRatesWithFlags();
+      }
+    )
     if(sortType) {
       this.isSortAlphabeticallyActive = JSON.parse(sortType)
     }
     this.filterByInputValue()
-    this.getRatesWithFlags();
+  }
+
+  ngOnDestroy(): void {
+    if (this.isLoggedSubscription) {
+      this.isLoggedSubscription.unsubscribe();
+    }
   }
 
   private filterByInputValue(): void {
@@ -69,9 +82,12 @@ export class CurrencyListComponent implements OnInit {
   private getRatesWithFlags(): void {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.initialRatesWithFlag = this.currencyTranslationService.getRateWithFlagForLocale(this.locale, rates)
-      this.favouritesRatesService.checkFavourites(this.initialRatesWithFlag)
+      if (this.isLogged) {
+        this.favouritesRatesService.checkFavourites(this.initialRatesWithFlag)
+      }
       this.ratesWithFlag = [...this.initialRatesWithFlag]
       this.sortCurrencies()
+      console.log(this.ratesWithFlag)
     });
   }
 
@@ -138,8 +154,6 @@ export class CurrencyListComponent implements OnInit {
 
   addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
     this.isHeartClicked = !this.isHeartClicked
-    console.log(this.isLogged)
-    console.log(this.isHeartClicked)
     event.stopPropagation()
     if (this.isLogged) {
       const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)

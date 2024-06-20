@@ -26,7 +26,8 @@ export class NavbarComponent implements OnInit{
   isCollapsed = true;
   toggleIcon: IconDefinition = faBars;
 
-  constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller, private authService: AuthService) {}
+  constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller, private authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.authService.isLoggedObservable().subscribe(

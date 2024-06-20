@@ -34,6 +34,7 @@ export class LogInComponent implements OnInit {
       this.userService.loginUser(this.user).subscribe(
         response => {
           this.authService.setToken(response);
+          this.authService.setEmail(this.user.email);
           this.loginForm.reset();
         },
         err => {

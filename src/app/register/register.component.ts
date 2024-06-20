@@ -35,6 +35,7 @@ export class RegisterComponent implements OnInit{
       this.userService.registerUser(this.user).subscribe(
         response => {
           this.authService.setToken(response);
+          this.authService.setEmail(this.user.email);
         },
         err => {
           this.error = err.error;

@@ -8,7 +8,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class AuthService {
   private JWT_TOKEN_KEY = 'JWTToken';
   private jwtToken: string | null = null;
-  private isLogged = new BehaviorSubject<boolean>(false)
+  private email: string = '';
+  private isLogged = new BehaviorSubject<boolean>(false);
 
   constructor() {
     this.jwtToken = this.getToken();
@@ -23,12 +24,26 @@ export class AuthService {
   }
 
   public getToken(): string | null {
-    return localStorage.getItem(this.JWT_TOKEN_KEY);
+    const tokenString = localStorage.getItem(this.JWT_TOKEN_KEY);
+    if (tokenString) {
+      const tokenObject = JSON.parse(tokenString);
+      return tokenObject.token || null;
+    }
+    return null;
   }
 
   public removeToken() {
     localStorage.removeItem(this.JWT_TOKEN_KEY);
     this.isLogged.next(false);
+  }
+
+  public setEmail(email: string): string {
+    this.email = email;
+    return this.email;
+  }
+
+  public getEmail(): string {
+    return this.email;
   }
 
   public isLoggedObservable(): Observable<boolean> {
