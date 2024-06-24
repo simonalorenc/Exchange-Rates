@@ -1,5 +1,15 @@
 <div class="pt-5">
   <div class="container pt-3">
+    <ng-template #template>
+      <div class="modal-body d-flex flex-row justify-content-between">
+        <div>
+          {{ loginInfo }}
+        </div>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </ng-template>
     <div class="row pb-3">
       <div class="col">
         <div class="d-flex flex-row align-items-center">
@@ -7,7 +17,7 @@
           <fa-icon
             class="fa-2xl far-regular custom-color"
             [icon]="heartIcon"
-            (click)="heartIconClick(code)"
+            (click)="heartIconClick(code, template)"
           ></fa-icon>
         </div>
         <div class="row">

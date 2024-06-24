@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { UserService } from './user.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 @Injectable({
@@ -7,8 +6,8 @@ import { BehaviorSubject, Observable } from 'rxjs';
 })
 export class AuthService {
   private JWT_TOKEN_KEY = 'JWTToken';
+  private USERNAME_KEY = 'username';
   private jwtToken: string | null = null;
-  private email: string = '';
   private isLogged = new BehaviorSubject<boolean>(false);
 
   constructor() {
@@ -19,17 +18,12 @@ export class AuthService {
   }
 
   public setToken(value: string): void {
-    localStorage.setItem(this.JWT_TOKEN_KEY, JSON.stringify(value));
+    localStorage.setItem(this.JWT_TOKEN_KEY, value);
     this.isLogged.next(true);
   }
 
   public getToken(): string | null {
-    const tokenString = localStorage.getItem(this.JWT_TOKEN_KEY);
-    if (tokenString) {
-      const tokenObject = JSON.parse(tokenString);
-      return tokenObject.token || null;
-    }
-    return null;
+    return localStorage.getItem(this.JWT_TOKEN_KEY);
   }
 
   public removeToken() {
@@ -37,13 +31,16 @@ export class AuthService {
     this.isLogged.next(false);
   }
 
-  public setEmail(email: string): string {
-    this.email = email;
-    return this.email;
+  public setUsername(name: string): void {
+    localStorage.setItem(this.USERNAME_KEY, name);
   }
 
-  public getEmail(): string {
-    return this.email;
+  public getUsername(): string | null {
+    return localStorage.getItem(this.USERNAME_KEY);
+  }
+
+  public removeUsername() {
+    localStorage.removeItem(this.USERNAME_KEY);
   }
 
   public isLoggedObservable(): Observable<boolean> {

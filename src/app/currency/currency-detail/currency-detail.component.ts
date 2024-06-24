@@ -1,4 +1,4 @@
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyRate } from '../data/currency-exchange-table-dto';
 import { ExchangeRateService } from '../data/exchange-rate.service';
@@ -14,6 +14,8 @@ import { faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
 import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 import { ViewportScroller } from '@angular/common';
 import { DatesService } from 'src/app/dates.service';
+import { AuthService } from 'src/app/auth.service';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 
 @Component({
   selector: 'app-currency-detail',
@@ -22,6 +24,7 @@ import { DatesService } from 'src/app/dates.service';
 })
 export class CurrencyDetailComponent implements OnInit {
   ActiveChart = ActiveChart;
+  isLogged: boolean = false;
   name!: string;
   code!: string;
   flagUrl!: string;
@@ -31,7 +34,9 @@ export class CurrencyDetailComponent implements OnInit {
   isRateInFavourites: boolean = false;
   dates: string[] = [];
   currentPage: number = 1;
-  private NUMBER_ITEMS_ON_PAGE: number = 7
+  private NUMBER_ITEMS_ON_PAGE: number = 7;
+  loginInfo: string = 'Login to add to favourites!';
+  modalRef!: BsModalRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,9 +48,14 @@ export class CurrencyDetailComponent implements OnInit {
     private currencyTranslationService: CurrencyTranslationService,
     private favouritesRatesService: FavouritesRatesService,
     private viewportScroller: ViewportScroller,
-    private datesService: DatesService
+    private datesService: DatesService,
+    private authService: AuthService,
+    private modalService: BsModalService,
   ) {
     this.code = this.route.snapshot.paramMap.get('code')!;
+    this.authService.isLoggedObservable().subscribe(
+      res => this.isLogged = res
+    )
   }
 
   ngOnInit(): void {
@@ -125,15 +135,34 @@ export class CurrencyDetailComponent implements OnInit {
     this.viewportScroller.scrollToAnchor('chartView');
   }
 
-  heartIconClick(code: string): void {
-    if (this.isRateInFavourites) {
-      this.isRateInFavourites = false
-      this.favouritesRatesService.removeFromFavourites(code);
-      this.heartIcon = farHeart
+  heartIconClick(code: string, template: TemplateRef<any>): void {
+    if (this.isLogged) {
+      if (this.isRateInFavourites) {
+        this.isRateInFavourites = false
+        this.favouritesRatesService.removeFromFavourites(code);
+        this.heartIcon = farHeart
+      } else {
+        this.isRateInFavourites = true
+        this.favouritesRatesService.addToFavourites(code);
+        this.heartIcon = fasHeart
+      }
     } else {
-      this.isRateInFavourites = true
-      this.favouritesRatesService.addToFavourites(code);
-      this.heartIcon = fasHeart
+      this.modalRef = this.modalService.show(template);
     }
   }
+
+  // addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
+  //   this.isHeartClicked = !this.isHeartClicked
+  //   event.stopPropagation()
+  //   if (this.isLogged) {
+  //     const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
+  //     if(foundRate) {
+  //       foundRate.isAddedToFavourite = true
+  //     }
+  //     this.favouritesRatesService.addToFavourites(code)
+  //     this.filterAndSortRatesWithFlags()
+  //   } else {
+  //     this.modalRef = this.modalService.show(template);
+  //   }
+  // }
 }

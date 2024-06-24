@@ -6,6 +6,11 @@ export interface User {
     currencies: string[];
 }
 
+export interface registerUser {
+    token: string;
+    user: User
+}
+
 export interface UserToLogin {
     email: string;
     password: string

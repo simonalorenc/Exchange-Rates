@@ -24,6 +24,7 @@ export class NavbarComponent implements OnInit{
   isTransparent: boolean = true
   isCurrenciesActive: boolean = false
   isCollapsed = true;
+  username: string = '';
   toggleIcon: IconDefinition = faBars;
 
   constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller, private authService: AuthService
@@ -33,6 +34,12 @@ export class NavbarComponent implements OnInit{
     this.authService.isLoggedObservable().subscribe(
       res => {
         this.isUserLogged = res;
+        if (this.isUserLogged) {
+          const response = this.authService.getUsername();
+          if (response) {
+            this.username = response;
+          }
+        }
       }
     )
   }
@@ -50,29 +57,32 @@ export class NavbarComponent implements OnInit{
   @HostListener('window: scroll', ['$event'])
   private onScroll(event: Event): void {
     if(!this.isCollapsed) return
-    this.isTransparent = this.isTransparentScrollOffset()
+    this.isTransparent = this.isTransparentScrollOffset();
   }
 
   private isTransparentScrollOffset(): boolean {
-    return window.scrollY < this.TRANSPARENT_SCROLL_OFFSET
+    return window.scrollY < this.TRANSPARENT_SCROLL_OFFSET;
   }
 
-  onClickCurrencies(): void {
-    this.navbarRoutingService.onClickCurrencies()
-    this.viewportScroller.scrollToPosition([0,0])
+  public onClickCurrencies(): void {
+    this.navbarRoutingService.onClickCurrencies();
+    this.viewportScroller.scrollToPosition([0,0]);
   }
 
-  onClickCalculator(): void {
-    this.navbarRoutingService.onClickCalculator()
-    this.viewportScroller.scrollToPosition([0,0])
+  public onClickCalculator(): void {
+    this.navbarRoutingService.onClickCalculator();
+    this.viewportScroller.scrollToPosition([0,0]);
   }
 
-  onClickGold(): void {
-    this.navbarRoutingService.onClickGold()
-    this.viewportScroller.scrollToPosition([0,0])
+  public onClickGold(): void {
+    this.navbarRoutingService.onClickGold();
+    this.viewportScroller.scrollToPosition([0,0]);
   }
-
+  
   public logout(): void {
     this.authService.removeToken();
+    this.authService.removeUsername();
+    this.username = '';
+    this.toggleCollapse();
   }
 }

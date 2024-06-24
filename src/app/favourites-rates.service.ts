@@ -14,34 +14,8 @@ export class FavouritesRatesService {
     
   }
 
-  private getStoredRatesObservable(): Observable<string[]> {
-    let jwtToken = this.authService.getToken();
-    if (!jwtToken) {
-      return of([]);
-    }
-    return this.userService.getUserCurrencies(jwtToken).pipe(
-      switchMap(res => {
-        if (res !== null) {
-          this.userFavouritesRates = res;
-        }
-        return of(this.userFavouritesRates);
-      }),
-      catchError(() => {
-        return of([]);
-      })
-    )
-  }
-
-  public getStoredRates(): void {
-    this.getStoredRatesObservable().subscribe(
-      res => {
-        this.userFavouritesRates = res;
-      }
-    )
-  }
-
   addToFavourites(code: string): void {
-    this.getStoredRates();
+    // this.getStoredRates();
     let jwtToken = this.authService.getToken();
     if (jwtToken) {
       this.userService.addCurrency(code, jwtToken).subscribe(
@@ -64,20 +38,24 @@ export class FavouritesRatesService {
   }
 
   checkFavourites(ratesWithFlag: RateWithFlag[]) {
-    this.getStoredRatesObservable().subscribe(
-      res => {
-        this.userFavouritesRates = res;
-        if (this.userFavouritesRates) {
-          ratesWithFlag.forEach(rateWithFlag => {
-          rateWithFlag.isAddedToFavourite = this.userFavouritesRates.includes(rateWithFlag.rate.code);
-          })
+    let jwtToken = this.authService.getToken();
+    if (jwtToken) {
+      this.userService.getUserCurrencies(jwtToken).subscribe(
+        res => {
+          console.log(res)
+          this.userFavouritesRates = res;
+          if (this.userFavouritesRates) {
+            ratesWithFlag.forEach(rateWithFlag => {
+              rateWithFlag.isAddedToFavourite = this.userFavouritesRates.includes(rateWithFlag.rate.code)
+            })
+          }
         }
-      }
-    );
+      )
+    }
   }
 
   checkIfRateIsInFavourites(code: string): boolean {
-    this.getStoredRates()
+    // this.getStoredRates()
     return this.userFavouritesRates.includes(code)
   }
 }

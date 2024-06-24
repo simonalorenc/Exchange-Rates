@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { User, UserToLogin } from './user';
+import { User, UserToLogin, registerUser } from './user';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -12,21 +12,22 @@ export class UserService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  public registerUser(user: User): Observable<string> {
-    return this.http.post<string>(`${this.userServerUrl}/auth/register`, user);
+  public registerUser(user: User): Observable<registerUser> {
+    return this.http.post<registerUser>(`${this.userServerUrl}/auth/register`, user);
   }
 
-  public loginUser(user: UserToLogin): Observable<string> {
-    return this.http.post<string>(`${this.userServerUrl}/auth/login`, user);
+  public loginUser(user: UserToLogin): Observable<registerUser> {
+    return this.http.post<registerUser>(`${this.userServerUrl}/auth/login`, user);
   }
 
   public getUserCurrencies(token: string): Observable<string[]> {
     const headers = new HttpHeaders ({
       'Authorization': `Bearer ${token}`
     });
+    console.log(`${this.userServerUrl}/getUserCurrencies`, { headers })
     return this.http.get<string[]>(`${this.userServerUrl}/getUserCurrencies`, { headers });
   }
-
+ 
   public addCurrency(currency: string, token: string): Observable<string> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',

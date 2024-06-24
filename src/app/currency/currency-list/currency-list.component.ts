@@ -87,7 +87,6 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
       }
       this.ratesWithFlag = [...this.initialRatesWithFlag]
       this.sortCurrencies()
-      console.log(this.ratesWithFlag)
     });
   }
 

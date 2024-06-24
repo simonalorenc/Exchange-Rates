@@ -34,8 +34,8 @@ export class RegisterComponent implements OnInit{
     if (this.registerForm.valid) {
       this.userService.registerUser(this.user).subscribe(
         response => {
-          this.authService.setToken(response);
-          this.authService.setEmail(this.user.email);
+          this.authService.setToken(response.token);
+          this.authService.setUsername(response.user.firstname);
         },
         err => {
           this.error = err.error;
