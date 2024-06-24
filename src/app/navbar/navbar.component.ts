@@ -33,13 +33,14 @@ export class NavbarComponent implements OnInit{
   ngOnInit(): void {
     this.authService.isLoggedObservable().subscribe(
       res => {
+        console.log(res)
         this.isUserLogged = res;
-        if (this.isUserLogged) {
-          const response = this.authService.getUsername();
-          if (response) {
-            this.username = response;
-          }
-        }
+      }
+    )
+    this.authService.usernameObservable().subscribe(
+      username => {
+        this.username = username;
+        console.log(username)
       }
     )
   }
@@ -78,7 +79,7 @@ export class NavbarComponent implements OnInit{
     this.navbarRoutingService.onClickGold();
     this.viewportScroller.scrollToPosition([0,0]);
   }
-  
+
   public logout(): void {
     this.authService.removeToken();
     this.authService.removeUsername();

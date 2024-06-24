@@ -9,11 +9,16 @@ export class AuthService {
   private USERNAME_KEY = 'username';
   private jwtToken: string | null = null;
   private isLogged = new BehaviorSubject<boolean>(false);
+  private username = new BehaviorSubject<string>('');
 
   constructor() {
     this.jwtToken = this.getToken();
     if (this.jwtToken !== null) {
       this.isLogged.next(true);
+    }
+    const storedUsername = this.getUsername();
+    if (storedUsername) {
+      this.username.next(storedUsername);
     }
   }
 
@@ -33,6 +38,7 @@ export class AuthService {
 
   public setUsername(name: string): void {
     localStorage.setItem(this.USERNAME_KEY, name);
+    this.username.next(name);
   }
 
   public getUsername(): string | null {
@@ -41,9 +47,14 @@ export class AuthService {
 
   public removeUsername() {
     localStorage.removeItem(this.USERNAME_KEY);
+    this.username.next('');
   }
 
   public isLoggedObservable(): Observable<boolean> {
     return this.isLogged.asObservable();
+  }
+
+  public usernameObservable(): Observable<string> {
+    return this.username.asObservable();
   }
 }

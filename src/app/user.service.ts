@@ -24,7 +24,6 @@ export class UserService {
     const headers = new HttpHeaders ({
       'Authorization': `Bearer ${token}`
     });
-    console.log(`${this.userServerUrl}/getUserCurrencies`, { headers })
     return this.http.get<string[]>(`${this.userServerUrl}/getUserCurrencies`, { headers });
   }
  

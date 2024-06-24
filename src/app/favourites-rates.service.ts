@@ -30,7 +30,7 @@ export class FavouritesRatesService {
     let jwtToken = this.authService.getToken();
     if (jwtToken) {
       this.userService.deleteCurrency(code, jwtToken).subscribe(
-        res => {
+        () => {
           this.userFavouritesRates = this.userFavouritesRates.filter((el) => el !== code);
         }
       )
@@ -42,7 +42,6 @@ export class FavouritesRatesService {
     if (jwtToken) {
       this.userService.getUserCurrencies(jwtToken).subscribe(
         res => {
-          console.log(res)
           this.userFavouritesRates = res;
           if (this.userFavouritesRates) {
             ratesWithFlag.forEach(rateWithFlag => {

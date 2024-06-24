@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
 import { User } from '../user';
 import { AuthService } from '../auth.service';
+import { NavbarRoutingService } from '../routing/navbar-routing.service';
 
 @Component({
   selector: 'app-register',
@@ -14,7 +15,7 @@ export class RegisterComponent implements OnInit{
   user: User = { firstname: '', lastname: '', email: '', password: '', currencies: [] };
   error: string = '';
   
-  constructor(private fb: FormBuilder, private userService: UserService, private authService: AuthService) {}
+  constructor(private fb: FormBuilder, private userService: UserService, private authService: AuthService, private navbarRoutingService: NavbarRoutingService) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -42,6 +43,7 @@ export class RegisterComponent implements OnInit{
         }
       );
       this.registerForm.reset();
+      this.navbarRoutingService.onClickCurrencies();
     } else {
       this.registerForm.markAllAsTouched();
       console.log('Form is invalid');

@@ -31,7 +31,6 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   isCollapsed: boolean = true;
   isLogged: boolean = false;
   isHeartClicked: boolean = false;
-  loginInfo: string = 'Login to add to favourites!';
   private isLoggedSubscription!: Subscription;
 
   constructor(
@@ -43,11 +42,11 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     private favouritesRatesService: FavouritesRatesService,
     private authService: AuthService,
     private modalService: BsModalService,
-    @Inject(LOCALE_ID) public locale: string //TODO public?
+    @Inject(LOCALE_ID) public locale: string 
   ) {
-    this.authService.isLoggedObservable().subscribe(
-      res => this.isLogged = res
-    )
+    // this.authService.isLoggedObservable().subscribe(
+    //   res => this.isLogged = res
+    // )
     this.filterForm = this.formBuilder.group({
       filterInputValue: [''],
     });

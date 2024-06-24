@@ -3,6 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { User, UserToLogin } from '../user';
 import { UserService } from '../user.service';
 import { AuthService } from '../auth.service';
+import { NavbarRoutingService } from '../routing/navbar-routing.service';
 
 @Component({
   selector: 'app-log-in',
@@ -15,7 +16,7 @@ export class LogInComponent implements OnInit {
   user: UserToLogin = { email: '', password: '' };
   error: string = '';
 
-  constructor(private fb: FormBuilder, private userService: UserService, private authService: AuthService) {}
+  constructor(private fb: FormBuilder, private userService: UserService, private authService: AuthService, private navbarRoutingService: NavbarRoutingService) {}
 
   ngOnInit(): void {
   this.initializeForm();
@@ -37,6 +38,7 @@ export class LogInComponent implements OnInit {
           this.authService.setToken(response.token);
           this.authService.setUsername(response.user.firstname);
           this.loginForm.reset();
+          this.navbarRoutingService.onClickCurrencies();
         },
         err => {
           this.error = err.error;

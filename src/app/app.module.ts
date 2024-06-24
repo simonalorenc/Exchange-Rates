@@ -25,6 +25,7 @@ import { CurrencyInputComponent } from './currency-input/currency-input.componen
 import { LogInComponent } from './log-in/log-in.component';
 import { RegisterComponent } from './register/register.component';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { ModalComponent } from './modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { ModalModule } from 'ngx-bootstrap/modal';
     CurrencyInputComponent,
     LogInComponent,
     RegisterComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,

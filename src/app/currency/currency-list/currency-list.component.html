@@ -2,14 +2,7 @@
   <div class="container">
 
     <ng-template #template>
-      <div class="modal-body d-flex flex-row justify-content-between">
-        <div>
-          {{ loginInfo }}
-        </div>
-        <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
+      <app-modal></app-modal>
     </ng-template>
 
     <form [formGroup]="filterForm" class="d-flex">

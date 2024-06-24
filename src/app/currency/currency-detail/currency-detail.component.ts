@@ -35,7 +35,6 @@ export class CurrencyDetailComponent implements OnInit {
   dates: string[] = [];
   currentPage: number = 1;
   private NUMBER_ITEMS_ON_PAGE: number = 7;
-  loginInfo: string = 'Login to add to favourites!';
   modalRef!: BsModalRef;
 
   constructor(
@@ -150,19 +149,4 @@ export class CurrencyDetailComponent implements OnInit {
       this.modalRef = this.modalService.show(template);
     }
   }
-
-  // addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
-  //   this.isHeartClicked = !this.isHeartClicked
-  //   event.stopPropagation()
-  //   if (this.isLogged) {
-  //     const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
-  //     if(foundRate) {
-  //       foundRate.isAddedToFavourite = true
-  //     }
-  //     this.favouritesRatesService.addToFavourites(code)
-  //     this.filterAndSortRatesWithFlags()
-  //   } else {
-  //     this.modalRef = this.modalService.show(template);
-  //   }
-  // }
 }
