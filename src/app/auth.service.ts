@@ -10,6 +10,7 @@ export class AuthService {
   private jwtToken: string | null = null;
   private isLogged = new BehaviorSubject<boolean>(false);
   private username = new BehaviorSubject<string>('');
+  private message = new BehaviorSubject<string>('');
 
   constructor() {
     this.jwtToken = this.getToken();
@@ -34,6 +35,27 @@ export class AuthService {
   public removeToken() {
     localStorage.removeItem(this.JWT_TOKEN_KEY);
     this.isLogged.next(false);
+  }
+
+  public setLoginMessage(): void {
+    this.message.next('login');
+    console.log("auth service login")
+  }
+
+  public setRegisterMessage(): void {
+    this.message.next('register');
+  }
+
+  public messageAsObservable(): Observable<string> {
+    return this.message.asObservable();
+  }
+
+  public getMessage(): string {
+    return this.message.value;
+  }
+
+  public clearMessage(): void {
+    this.message.next('');
   }
 
   public setUsername(name: string): void {

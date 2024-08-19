@@ -44,9 +44,9 @@
         >
       </div>
       <div class="navbar-nav text-center">
-        <a *ngIf="!isUserLogged" [routerLink]="['/log-in']" class="nav-link" (click)="toggleCollapse()">Log in</a>
+        <a *ngIf="!isUserLogged" [routerLink]="['/log-in']" class="nav-link">Log in</a>
         <a *ngIf="isUserLogged" class="nav-link" (click)="logout()">Log out</a>
-        <a *ngIf="!isUserLogged" [routerLink]="['/register']" class="nav-link" (click)="toggleCollapse()">Register</a>
+        <a *ngIf="!isUserLogged" [routerLink]="['/register']" class="nav-link">Register</a>
       </div>
     </div>
   </div>

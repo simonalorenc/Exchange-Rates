@@ -36,6 +36,7 @@ export class RegisterComponent implements OnInit{
       this.userService.registerUser(this.user).subscribe(
         response => {
           this.authService.setToken(response.token);
+          this.authService.setRegisterMessage();
           this.authService.setUsername(response.user.firstname);
         },
         err => {

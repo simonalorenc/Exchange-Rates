@@ -33,14 +33,12 @@ export class NavbarComponent implements OnInit{
   ngOnInit(): void {
     this.authService.isLoggedObservable().subscribe(
       res => {
-        console.log(res)
         this.isUserLogged = res;
       }
     )
     this.authService.usernameObservable().subscribe(
       username => {
         this.username = username;
-        console.log(username)
       }
     )
   }

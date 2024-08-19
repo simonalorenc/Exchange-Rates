@@ -11,6 +11,7 @@ import { ViewportScroller } from '@angular/common';
 import { AuthService } from 'src/app/auth.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription } from 'rxjs';
+import { ModalComponent } from 'src/app/modal/modal.component';
 
 @Component({
   selector: 'app-currency-list',
@@ -31,6 +32,9 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   isCollapsed: boolean = true;
   isLogged: boolean = false;
   isHeartClicked: boolean = false;
+  loginMessage!: boolean;
+  registerMessage!: boolean;
+  message!: string;
   private isLoggedSubscription!: Subscription;
 
   constructor(
@@ -60,6 +64,21 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
         this.getRatesWithFlags();
       }
     )
+    this.authService.messageAsObservable().subscribe(
+      (res) => {
+        if (res === 'login') {
+          this.message = 'Successfully logged in!';
+        } else if ( res === 'register') {
+          this.message = 'Successfully registered!';
+        }
+        if (this.message) {
+          console.log('dddd')
+          setTimeout(() => {
+            this.authService.clearMessage();
+            this.message = '';
+          }, 3000);
+        }
+      })
     if(sortType) {
       this.isSortAlphabeticallyActive = JSON.parse(sortType)
     }
@@ -144,13 +163,14 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     this.viewPortScroller.scrollToPosition([0, 0])
   }
 
-  openModal(template: TemplateRef<any>) {
-    if (!this.isLogged) {
-      this.modalRef = this.modalService.show(template);
-    }
+  openModalWithMessage(message: string) {
+    const initialState = {
+      loginInfo: message
+    };
+    this.modalRef = this.modalService.show(ModalComponent, { initialState })
   }
 
-  addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
+  addToFavourite(code: string, event: Event): void {
     this.isHeartClicked = !this.isHeartClicked
     event.stopPropagation()
     if (this.isLogged) {
@@ -161,7 +181,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
       this.favouritesRatesService.addToFavourites(code)
       this.filterAndSortRatesWithFlags()
     } else {
-      this.modalRef = this.modalService.show(template);
+      this.openModalWithMessage("Login to add to favourites!")
     }
   }
 
@@ -175,5 +195,9 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
       this.favouritesRatesService.removeFromFavourites(code)
       this.filterAndSortRatesWithFlags()
     }
+  }
+
+  trackByCurrency(index: Number, rateWithFlag: RateWithFlag): string {
+    return rateWithFlag.rate.code
   }
 }

@@ -5,6 +5,17 @@
       <app-modal></app-modal>
     </ng-template>
 
+    <div *ngIf="message" class="alert alert-success">
+      {{ message }}
+    </div>
+
+    <div
+      class="position-absolute d-flex justify-content-center"
+      *ngIf=""
+      >
+      Saved recipe! Check it in Saved Recipes.
+    </div>
+
     <form [formGroup]="filterForm" class="d-flex">
       <input
         formControlName="filterInputValue"
@@ -30,7 +41,7 @@
       <div class="row d-flex justify-content-center">
         <div
           class="col-12 col-md-6 pb-1 p-1"
-          *ngFor="let currency of ratesWithFlag"
+          *ngFor="let currency of ratesWithFlag; trackBy: trackByCurrency"
         >
           <div class="card" (click)="navigateToDetail(currency.rate.code)">
             <div
@@ -59,7 +70,7 @@
                   class="far-regular custom-color" 
                   *ngIf="currency.isAddedToFavourite === false"
                   [icon]="emptyHeartIcon" 
-                  (click)="addToFavourite(currency.rate.code, $event, template)"
+                  (click)="addToFavourite(currency.rate.code, $event)"
                 ></fa-icon>
                 <fa-icon  
                   class="far-regular custom-color" 
