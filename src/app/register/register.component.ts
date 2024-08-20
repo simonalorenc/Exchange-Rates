@@ -38,13 +38,17 @@ export class RegisterComponent implements OnInit{
           this.authService.setToken(response.token);
           this.authService.setRegisterMessage();
           this.authService.setUsername(response.user.firstname);
+          this.registerForm.reset();
+          this.navbarRoutingService.onClickCurrencies();
         },
         err => {
-          this.error = err.error;
+          if (err.status === 0) {
+            this.error = 'An unexpected error occurred. Please try again later.'
+          } else {
+            this.error = err.error;
+          }
         }
       );
-      this.registerForm.reset();
-      this.navbarRoutingService.onClickCurrencies();
     } else {
       this.registerForm.markAllAsTouched();
       console.log('Form is invalid');

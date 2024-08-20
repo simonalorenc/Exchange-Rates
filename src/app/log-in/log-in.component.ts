@@ -36,13 +36,16 @@ export class LogInComponent implements OnInit {
         response => {
           this.authService.setToken(response.token);
           this.authService.setLoginMessage();
-          console.log("login component");
           this.authService.setUsername(response.user.firstname);
           this.loginForm.reset();
           this.navbarRoutingService.onClickCurrencies();
         },
         err => {
-          this.error = err.error;
+          if (err.error === "Incorrect Password" || err.error === `User doesn't exist.`) {
+            this.error = err.error;
+          } else {
+            this.error = 'An unexpected error occurred. \nPlease try again later.'
+          }
         }
       )
     } else {

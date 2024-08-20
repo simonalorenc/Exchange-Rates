@@ -42,7 +42,9 @@
           i18n
           >Gold</a
         >
+        
       </div>
+      
       <div class="navbar-nav text-center">
         <a *ngIf="!isUserLogged" [routerLink]="['/log-in']" class="nav-link">Log in</a>
         <a *ngIf="isUserLogged" class="nav-link" (click)="logout()">Log out</a>

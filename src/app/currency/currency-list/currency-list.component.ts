@@ -72,7 +72,6 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
           this.message = 'Successfully registered!';
         }
         if (this.message) {
-          console.log('dddd')
           setTimeout(() => {
             this.authService.clearMessage();
             this.message = '';
@@ -163,14 +162,13 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     this.viewPortScroller.scrollToPosition([0, 0])
   }
 
-  openModalWithMessage(message: string) {
-    const initialState = {
-      loginInfo: message
-    };
-    this.modalRef = this.modalService.show(ModalComponent, { initialState })
+  openModal(template: TemplateRef<any>) {
+    if (!this.isLogged) {
+      this.modalRef = this.modalService.show(template);
+    }
   }
 
-  addToFavourite(code: string, event: Event): void {
+  addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
     this.isHeartClicked = !this.isHeartClicked
     event.stopPropagation()
     if (this.isLogged) {
@@ -181,7 +179,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
       this.favouritesRatesService.addToFavourites(code)
       this.filterAndSortRatesWithFlags()
     } else {
-      this.openModalWithMessage("Login to add to favourites!")
+      this.modalRef = this.modalService.show(template);
     }
   }
 

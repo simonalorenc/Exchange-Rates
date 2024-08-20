@@ -70,7 +70,7 @@
                   class="far-regular custom-color" 
                   *ngIf="currency.isAddedToFavourite === false"
                   [icon]="emptyHeartIcon" 
-                  (click)="addToFavourite(currency.rate.code, $event)"
+                  (click)="addToFavourite(currency.rate.code, $event, template)"
                 ></fa-icon>
                 <fa-icon  
                   class="far-regular custom-color" 

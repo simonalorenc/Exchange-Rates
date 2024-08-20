@@ -22,7 +22,7 @@
                     <div *ngIf="!loginForm.get('password')?.valid && loginForm.get('password')?.touched" class="text-danger small">
                         Password is required!
                     </div>
-                    <div *ngIf="error" class="text-danger">
+                    <div *ngIf="error" class="text-danger error-container">
                         {{ error }}
                     </div>
                     <div class="d-flex justify-content-center mt-5">

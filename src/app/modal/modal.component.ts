@@ -8,18 +8,12 @@ import { IconDefinition, faXmark } from '@fortawesome/free-solid-svg-icons';
   styleUrls: ['./modal.component.scss']
 })
 export class ModalComponent {
-  loginInfo: string = '';
+  loginInfo: string = 'Login to add to favourites!';
   modalRef!: BsModalRef;
   closeIcon: IconDefinition = faXmark;
 
   constructor(private modalService: BsModalService
   ) {}
-
-  ngOnInit() {
-    if (this.modalRef.content && this.modalRef.content.loginInfo) {
-      this.loginInfo = this.modalRef.content.loginInfo;
-    }
-  }
 
   hide() {
     this.modalService.hide();

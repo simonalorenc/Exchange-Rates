@@ -39,7 +39,6 @@ export class AuthService {
 
   public setLoginMessage(): void {
     this.message.next('login');
-    console.log("auth service login")
   }
 
   public setRegisterMessage(): void {
