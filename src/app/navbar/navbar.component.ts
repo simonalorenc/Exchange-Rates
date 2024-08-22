@@ -25,6 +25,7 @@ export class NavbarComponent implements OnInit{
   isCurrenciesActive: boolean = false
   isCollapsed = true;
   username: string = '';
+  screenWidth!: boolean;
   toggleIcon: IconDefinition = faBars;
 
   constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller, private authService: AuthService
@@ -34,6 +35,7 @@ export class NavbarComponent implements OnInit{
     this.authService.isLoggedObservable().subscribe(
       res => {
         this.isUserLogged = res;
+        this.screenWidth = window.innerWidth > 992;
       }
     )
     this.authService.usernameObservable().subscribe(
@@ -41,6 +43,22 @@ export class NavbarComponent implements OnInit{
         this.username = username;
       }
     )
+  }
+
+  @HostListener('window: scroll', ['$event'])
+  private onScroll(event: Event): void {
+    if(!this.isCollapsed) return
+    this.isTransparent = this.isTransparentScrollOffset();
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event: Event) {
+    if (window.innerWidth > 992) {
+      this.screenWidth = true
+    } else {
+      this.screenWidth = false;
+    }
+    console.log(this.isUserLogged + '    ' + this.screenWidth)
   }
 
   toggleCollapse(): void {
@@ -51,12 +69,6 @@ export class NavbarComponent implements OnInit{
       this.toggleIcon = faXmark
     }
     this.isTransparent = this.isCollapsed && this.isTransparentScrollOffset()
-  }
-
-  @HostListener('window: scroll', ['$event'])
-  private onScroll(event: Event): void {
-    if(!this.isCollapsed) return
-    this.isTransparent = this.isTransparentScrollOffset();
   }
 
   private isTransparentScrollOffset(): boolean {
@@ -82,6 +94,8 @@ export class NavbarComponent implements OnInit{
     this.authService.removeToken();
     this.authService.removeUsername();
     this.username = '';
-    this.toggleCollapse();
+    if (this.screenWidth = window.innerWidth < 992) {
+      this.toggleCollapse();
+    }
   }
 }

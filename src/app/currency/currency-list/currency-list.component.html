@@ -5,15 +5,8 @@
       <app-modal></app-modal>
     </ng-template>
 
-    <div *ngIf="message" class="alert alert-success">
+    <div *ngIf="message" class="alert alert-success position-absolute">
       {{ message }}
-    </div>
-
-    <div
-      class="position-absolute d-flex justify-content-center"
-      *ngIf=""
-      >
-      Saved recipe! Check it in Saved Recipes.
     </div>
 
     <form [formGroup]="filterForm" class="d-flex">
