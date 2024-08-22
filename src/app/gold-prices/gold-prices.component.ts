@@ -22,12 +22,12 @@ export class GoldPricesComponent implements OnInit {
     this.getGoldPricesFromLastDays()
   }
 
-  getGoldPricesFromLastDays(): void {
+  private getGoldPricesFromLastDays(): void {
     this.dates = this.datesService.getStartAndEndDate(13)
     this.displayGoldPrices()
   }
 
-  displayGoldPrices(): void {
+  private displayGoldPrices(): void {
     this.goldPriceService.getGoldPricesDtoFromRangeTime(this.dates[0], this.dates[1]).subscribe(
       result => {
         const allDates = this.getAllDatesInRange();

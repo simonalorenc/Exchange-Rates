@@ -71,7 +71,7 @@ export class CurrencyDetailComponent implements OnInit {
     this.displayExchangeRates()
   }
 
-  displayExchangeRates() {
+  private displayExchangeRates() {
     this.exchangeRateService.getCurrencyExchangeTableDtoForDateRange(this.code, this.dates[0], this.dates[1]).subscribe((currencyResult) => {
       this.name = this.currencyTranslationService.updateDetailCurrency(this.locale, currencyResult)
       const allDates = this.datesService.getAllFormattedDatesBetweenRange(new Date(this.dates[0]), new Date(this.dates[1]))
@@ -87,13 +87,13 @@ export class CurrencyDetailComponent implements OnInit {
     })
   }
 
-  onPageChangePrevious() {
+  public onPageChangePrevious() {
     this.currentPage = this.currentPage - 1;
     this.dates = this.getDates(this.currentPage)
     this.displayExchangeRates();
   }
 
-  onPageChangeNext() {
+  public onPageChangeNext() {
     this.currentPage = this.currentPage + 1;
     this.dates = this.getDates(this.currentPage)
     this.displayExchangeRates();
@@ -111,30 +111,30 @@ export class CurrencyDetailComponent implements OnInit {
     return [startDateString, endDateString];
   }
 
-  changePageToFirst() {
+  public changePageToFirst() {
     this.currentPage = 1
     this.getCurrencyDetailsAndFlagUrl()
   }
 
-  isChartFromLastSevenDaysActive(): void {
+  public isChartFromLastSevenDaysActive(): void {
     this.activeChart = ActiveChart.LastSevenDays;
     this.router.navigate([`detail/${this.code}/chart-from-last-seven-days`]);
     this.viewportScroller.scrollToAnchor('chartView');
   }
 
-  isChartFromLastDaysActive(): void {
+  public isChartFromLastDaysActive(): void {
     this.activeChart = ActiveChart.Last30Days;
     this.router.navigate([`detail/${this.code}/chart-from-last-days`]);
     this.viewportScroller.scrollToAnchor('chartView');
   }
 
-  isChartFromLastMonthsActive(): void {
+  public isChartFromLastMonthsActive(): void {
     this.activeChart = ActiveChart.LastMonths;
     this.router.navigate([`detail/${this.code}/chart-from-last-months`]);
     this.viewportScroller.scrollToAnchor('chartView');
   }
 
-  heartIconClick(code: string, template: TemplateRef<any>): void {
+  public heartIconClick(code: string, template: TemplateRef<any>): void {
     if (this.isLogged) {
       if (this.isRateInFavourites) {
         this.isRateInFavourites = false

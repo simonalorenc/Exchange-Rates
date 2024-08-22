@@ -61,7 +61,7 @@ export class NavbarComponent implements OnInit{
     console.log(this.isUserLogged + '    ' + this.screenWidth)
   }
 
-  toggleCollapse(): void {
+  public toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed
     if(this.isCollapsed) {
       this.toggleIcon = faBars

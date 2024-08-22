@@ -25,21 +25,21 @@ export class CurrencyInputComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  toggleList(): void {
+  public toggleList(): void {
     this.isListExpanded = !this.isListExpanded
   }
 
-  clickedCurrency(rateWithFlag: RateWithFlag) {
+  public clickedCurrency(rateWithFlag: RateWithFlag) {
     this.rateWithFlag = rateWithFlag
     this.toggleList()
     this.updateExchangeRate()
   }
 
-  updateExchangeRate() {
+  private updateExchangeRate() {
     this.exchangeRateChange.emit(this.rateWithFlag?.rate.mid)
   }
 
-  onValueChanged() {
+  public onValueChanged() {
     this.valueChanged.emit(this.inputValue)
   }
 }

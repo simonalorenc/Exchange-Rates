@@ -48,9 +48,6 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     @Inject(LOCALE_ID) public locale: string 
   ) {
-    // this.authService.isLoggedObservable().subscribe(
-    //   res => this.isLogged = res
-    // )
     this.filterForm = this.formBuilder.group({
       filterInputValue: [''],
     });
@@ -142,7 +139,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     }
   }
 
-  setSortType(isSortAlphabetically: boolean): void {
+  public setSortType(isSortAlphabetically: boolean): void {
     this.isSortAlphabeticallyActive = isSortAlphabetically;
     this.setSortingMethod()
     this.toggleCollapse()
@@ -153,22 +150,22 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     localStorage.setItem(this.SORT_KEY, JSON.stringify(this.isSortAlphabeticallyActive))
   }
 
-  toggleCollapse(): void {
+  public toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed
   }
 
-  navigateToDetail(code: string): void {
+  public navigateToDetail(code: string): void {
     this.router.navigate([`/detail/${code}`]);
     this.viewPortScroller.scrollToPosition([0, 0])
   }
 
-  openModal(template: TemplateRef<any>) {
+  private openModal(template: TemplateRef<any>) {
     if (!this.isLogged) {
       this.modalRef = this.modalService.show(template);
     }
   }
 
-  addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
+  public addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
     this.isHeartClicked = !this.isHeartClicked
     event.stopPropagation()
     if (this.isLogged) {
@@ -183,7 +180,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeFromFavourite(code: string, event: Event): void {
+  public removeFromFavourite(code: string, event: Event): void {
     event.stopPropagation()
     if (this.isLogged) {
       const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
@@ -195,7 +192,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     }
   }
 
-  trackByCurrency(index: Number, rateWithFlag: RateWithFlag): string {
+  public trackByCurrency(index: Number, rateWithFlag: RateWithFlag): string {
     return rateWithFlag.rate.code
   }
 }
