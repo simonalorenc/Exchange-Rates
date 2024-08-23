@@ -15,7 +15,7 @@ export class ModalComponent {
   constructor(private modalService: BsModalService
   ) {}
 
-  hide() {
+  public hide() {
     this.modalService.hide();
   }
 }

@@ -29,7 +29,7 @@ export class LogInComponent implements OnInit {
     })
   }
 
-  onSubmit(): void {
+  public onSubmit(): void {
     this.saveUserData();
     if (this.loginForm.valid) {
       this.userService.loginUser(this.user).subscribe(

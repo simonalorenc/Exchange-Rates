@@ -30,7 +30,7 @@ export class RegisterComponent implements OnInit{
     })
   }
 
-  onSubmit(): void {
+  public onSubmit(): void {
     this.saveUserData();
     if (this.registerForm.valid) {
       this.userService.registerUser(this.user).subscribe(
