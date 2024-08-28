@@ -11,6 +11,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ViewportScroller } from '@angular/common';
 import { Observable, of } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { AuthService } from 'src/app/auth.service';
+import { BsModalService } from 'ngx-bootstrap/modal';
 
 describe('CurrencyDetailComponent', () => {
   let component: CurrencyDetailComponent;
@@ -43,6 +45,13 @@ describe('CurrencyDetailComponent', () => {
   let viewportScrolleSpy = jasmine.createSpyObj('ViewportScroller', [
     'scrollToAnchor',
   ]);
+  let authServiceSpy = jasmine.createSpyObj('AuthService', [
+    'isLoggedObservable',
+  ]);
+  let modalServiceSpy = jasmine.createSpyObj('BsModalService', [
+    'show',
+    'hide',
+  ]);
 
   beforeEach(() => {
     datesServiceSpy.getStartAndEndDate.and.returnValue([])
@@ -52,6 +61,7 @@ describe('CurrencyDetailComponent', () => {
         get: (key: string) => 'some-value', // Mocking paramMap
       },
     };
+    authServiceSpy.isLoggedObservable.and.returnValue(of(true));
     TestBed.configureTestingModule({
       declarations: [CurrencyDetailComponent],
       providers: [
@@ -70,6 +80,8 @@ describe('CurrencyDetailComponent', () => {
         },
         { provide: DatesService, useValue: datesServiceSpy },
         { provide: ViewportScroller, useValue: viewportScrolleSpy },
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: BsModalService, useValue: modalServiceSpy },
       ],
       schemas: [NO_ERRORS_SCHEMA]
     });
@@ -79,28 +91,14 @@ describe('CurrencyDetailComponent', () => {
   });
 
   it('should change to next page', () => {
-
-    spyOn(component, 'onPageChangeNext').and.callFake(() => {
-      component.currentPage = 7
-      component.currentPage = component.currentPage + 1
-      return component.currentPage
-    })
-
+    component.currentPage = 7
     component.onPageChangeNext()
-
     expect(component.currentPage).toEqual(8);
   });
 
   it('should change to previous page', () => {
-
-    spyOn(component, 'onPageChangePrevious').and.callFake(() => {
-      component.currentPage = 7
-      component.currentPage = component.currentPage - 1
-      return component.currentPage
-    })
-
+    component.currentPage = 7
     component.onPageChangePrevious()
-
     expect(component.currentPage).toEqual(6);
   });
 });

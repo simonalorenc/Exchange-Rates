@@ -17,7 +17,6 @@ export class FavouritesRatesService {
   }
 
   addToFavourites(code: string): void {
-    console.log('Current context:', this);
     let jwtToken = this.authService.getToken();
     if (jwtToken) {
       this.userService.addCurrency(code, jwtToken).subscribe(
