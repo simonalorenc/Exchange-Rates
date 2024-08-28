@@ -5,7 +5,7 @@
   <div class="container-fluid d-flex align-items-center p-0">
     <a class="navbar-brand" href="#"><h5>Exchange•Rates</h5></a>
     <div class="d-flex">
-      <div class="me-3 d-flex align-items-center" *ngIf="isUserLogged && !screenWidth">Welcome,&nbsp; <b> {{ username }} </b> ! </div>
+      <div class="me-3 d-flex align-items-center" *ngIf="isUserLogged && !isLargeScreenWidth">Welcome,&nbsp; <b> {{ username }} </b> ! </div>
       <div class="navbar-toggler cursor border-0" (click)="toggleCollapse()">
       <fa-icon class="fa-lg" [icon]="toggleIcon"></fa-icon>
     </div>
@@ -45,7 +45,7 @@
       </div>
       <div class="navbar-nav text-center">
         <a *ngIf="!isUserLogged" [routerLink]="['/log-in']" class="nav-link">Log in</a>
-        <div class="me-3 d-flex align-items-center" *ngIf="isUserLogged && screenWidth">Welcome,&nbsp; <b> {{ username }} </b> ! </div>
+        <div class="me-3 d-flex align-items-center" *ngIf="isUserLogged && isLargeScreenWidth">Welcome,&nbsp; <b> {{ username }} </b> ! </div>
         <a *ngIf="isUserLogged" class="nav-link" (click)="logout()">Log out</a>
         <a *ngIf="!isUserLogged" [routerLink]="['/register']" class="nav-link">Register</a>
       </div>

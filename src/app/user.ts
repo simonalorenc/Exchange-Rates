@@ -6,7 +6,7 @@ export interface User {
     currencies: string[];
 }
 
-export interface registerUser {
+export interface RegisterUser {
     token: string;
     user: User
 }

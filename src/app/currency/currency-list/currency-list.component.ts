@@ -1,4 +1,4 @@
-import { Component, DoCheck, Inject, LOCALE_ID, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnDestroy, OnInit, TemplateRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CurrenciesRepository } from '../data/currencies-repository';
 import { RateWithFlag } from '../data/rate-with-flag';
@@ -6,12 +6,11 @@ import { Router } from '@angular/router';
 import { IconDefinition, faArrowUpAZ, faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CurrencyTranslationService } from '../data/currency.translation.service';
-import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 import { ViewportScroller } from '@angular/common';
 import { AuthService } from 'src/app/auth.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { Subscription } from 'rxjs';
-import { ModalComponent } from 'src/app/modal/modal.component';
+import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 
 @Component({
   selector: 'app-currency-list',
@@ -19,7 +18,8 @@ import { ModalComponent } from 'src/app/modal/modal.component';
   styleUrls: ['./currency-list.component.scss'],
 })
 export class CurrencyListComponent implements OnInit, OnDestroy {
-  private SORT_KEY: string = 'sortAlphabetically'
+  private SORT_KEY: string = 'sortAlphabetically';
+  private MESSAGE_TIME: number = 3000;
   modalRef!: BsModalRef;
 
   private initialRatesWithFlag: RateWithFlag[] = []
@@ -31,9 +31,6 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   fullHeartIcon: IconDefinition = fasHeart;
   isCollapsed: boolean = true;
   isLogged: boolean = false;
-  isHeartClicked: boolean = false;
-  loginMessage!: boolean;
-  registerMessage!: boolean;
   message!: string;
   private isLoggedSubscription!: Subscription;
 
@@ -72,7 +69,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
           setTimeout(() => {
             this.authService.clearMessage();
             this.message = '';
-          }, 3000);
+          }, this.MESSAGE_TIME);
         }
       })
     if(sortType) {
@@ -82,9 +79,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.isLoggedSubscription) {
-      this.isLoggedSubscription.unsubscribe();
-    }
+    this.isLoggedSubscription?.unsubscribe();
   }
 
   private filterByInputValue(): void {
@@ -166,7 +161,6 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   }
 
   public addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
-    this.isHeartClicked = !this.isHeartClicked
     event.stopPropagation()
     if (this.isLogged) {
       const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)

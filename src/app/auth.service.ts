@@ -7,14 +7,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class AuthService {
   private JWT_TOKEN_KEY = 'JWTToken';
   private USERNAME_KEY = 'username';
-  private jwtToken: string | null = null;
   private isLogged = new BehaviorSubject<boolean>(false);
   private username = new BehaviorSubject<string>('');
   private message = new BehaviorSubject<string>('');
 
   constructor() {
-    this.jwtToken = this.getToken();
-    if (this.jwtToken !== null) {
+    if (this.getToken() !== null) {
+      console.log("isLogged: " + this.isLogged)
       this.isLogged.next(true);
     }
     const storedUsername = this.getUsername();

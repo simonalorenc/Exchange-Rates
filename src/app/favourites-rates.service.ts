@@ -2,24 +2,29 @@ import { Injectable } from '@angular/core';
 import { RateWithFlag } from './currency/data/rate-with-flag';
 import { AuthService } from './auth.service';
 import { UserService } from './user.service';
-import { Observable, catchError, of, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FavouritesRatesService {
-  userFavouritesRates: string[] = [];  
+  userFavouritesRates!: string[];  
 
   constructor(private authService: AuthService, private userService: UserService) {
-    
+  }
+
+  initializeFavouritesAfterRegister(): void {
+    this.userFavouritesRates = [];
   }
 
   addToFavourites(code: string): void {
-    // this.getStoredRates();
+    console.log('Current context:', this);
     let jwtToken = this.authService.getToken();
     if (jwtToken) {
       this.userService.addCurrency(code, jwtToken).subscribe(
         () => {
+          if (!this.userFavouritesRates) {
+            this.userFavouritesRates = [];
+          }
           this.userFavouritesRates.push(code);
         }
       )
@@ -54,7 +59,6 @@ export class FavouritesRatesService {
   }
 
   checkIfRateIsInFavourites(code: string): boolean {
-    // this.getStoredRates()
     return this.userFavouritesRates.includes(code)
   }
 }

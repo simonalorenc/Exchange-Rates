@@ -4,6 +4,7 @@ import { UserService } from '../user.service';
 import { User } from '../user';
 import { AuthService } from '../auth.service';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
+import { FavouritesRatesService } from '../favourites-rates.service';
 
 @Component({
   selector: 'app-register',
@@ -15,7 +16,7 @@ export class RegisterComponent implements OnInit{
   user: User = { firstname: '', lastname: '', email: '', password: '', currencies: [] };
   error: string = '';
   
-  constructor(private fb: FormBuilder, private userService: UserService, private authService: AuthService, private navbarRoutingService: NavbarRoutingService) {}
+  constructor(private fb: FormBuilder, private userService: UserService, private authService: AuthService, private navbarRoutingService: NavbarRoutingService, private favouritesRatesService: FavouritesRatesService) {}
 
   ngOnInit(): void {
     this.initializeForm();
@@ -38,6 +39,7 @@ export class RegisterComponent implements OnInit{
           this.authService.setToken(response.token);
           this.authService.setRegisterMessage();
           this.authService.setUsername(response.user.firstname);
+          this.favouritesRatesService.initializeFavouritesAfterRegister();
           this.registerForm.reset();
           this.navbarRoutingService.onClickCurrencies();
         },
@@ -51,7 +53,6 @@ export class RegisterComponent implements OnInit{
       );
     } else {
       this.registerForm.markAllAsTouched();
-      console.log('Form is invalid');
     }
   }
 

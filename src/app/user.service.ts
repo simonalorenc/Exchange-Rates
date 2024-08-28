@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { User, UserToLogin, registerUser } from './user';
+import { User, UserToLogin, RegisterUser } from './user';
 import { AuthService } from './auth.service';
 
 @Injectable({
@@ -12,12 +12,12 @@ export class UserService {
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
-  public registerUser(user: User): Observable<registerUser> {
-    return this.http.post<registerUser>(`${this.userServerUrl}/auth/register`, user);
+  public registerUser(user: User): Observable<RegisterUser> {
+    return this.http.post<RegisterUser>(`${this.userServerUrl}/auth/register`, user);
   }
 
-  public loginUser(user: UserToLogin): Observable<registerUser> {
-    return this.http.post<registerUser>(`${this.userServerUrl}/auth/login`, user);
+  public loginUser(user: UserToLogin): Observable<RegisterUser> {
+    return this.http.post<RegisterUser>(`${this.userServerUrl}/auth/login`, user);
   }
 
   public getUserCurrencies(token: string): Observable<string[]> {

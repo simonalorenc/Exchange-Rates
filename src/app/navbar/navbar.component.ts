@@ -25,7 +25,7 @@ export class NavbarComponent implements OnInit{
   isCurrenciesActive: boolean = false
   isCollapsed = true;
   username: string = '';
-  screenWidth!: boolean;
+  isLargeScreenWidth!: boolean;
   toggleIcon: IconDefinition = faBars;
 
   constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller, private authService: AuthService
@@ -35,7 +35,7 @@ export class NavbarComponent implements OnInit{
     this.authService.isLoggedObservable().subscribe(
       res => {
         this.isUserLogged = res;
-        this.screenWidth = window.innerWidth > 992;
+        this.isLargeScreenWidth = window.innerWidth > 992;
       }
     )
     this.authService.usernameObservable().subscribe(
@@ -54,11 +54,10 @@ export class NavbarComponent implements OnInit{
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
     if (window.innerWidth > 992) {
-      this.screenWidth = true
+      this.isLargeScreenWidth = true
     } else {
-      this.screenWidth = false;
+      this.isLargeScreenWidth = false;
     }
-    console.log(this.isUserLogged + '    ' + this.screenWidth)
   }
 
   public toggleCollapse(): void {
@@ -94,7 +93,7 @@ export class NavbarComponent implements OnInit{
     this.authService.removeToken();
     this.authService.removeUsername();
     this.username = '';
-    if (this.screenWidth = window.innerWidth < 992) {
+    if (this.isLargeScreenWidth = window.innerWidth < 992) {
       this.toggleCollapse();
     }
   }
