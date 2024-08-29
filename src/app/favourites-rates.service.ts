@@ -7,57 +7,48 @@ import { UserService } from './user.service';
   providedIn: 'root',
 })
 export class FavouritesRatesService {
-  userFavouritesRates!: string[];  
+  userFavouritesRates!: string[];
 
-  constructor(private authService: AuthService, private userService: UserService) {
-  }
+  constructor(
+    private authService: AuthService,
+    private userService: UserService
+  ) {}
 
   initializeFavouritesAfterRegister(): void {
     this.userFavouritesRates = [];
   }
 
   addToFavourites(code: string): void {
-    let jwtToken = this.authService.getToken();    if (jwtToken) {
-      this.userService.addCurrency(code, jwtToken).subscribe(
-        () => {
-          
-          if (!this.userFavouritesRates) {
-            this.userFavouritesRates = [];
-          }
-          this.userFavouritesRates.push(code);
-        }
-      )
-    }
+    this.userService.addCurrency(code).subscribe(() => {
+      if (!this.userFavouritesRates) {
+        this.userFavouritesRates = [];
+      }
+      this.userFavouritesRates.push(code);
+    });
   }
 
   removeFromFavourites(code: string): void {
-    let jwtToken = this.authService.getToken();
-    if (jwtToken) {
-      this.userService.deleteCurrency(code, jwtToken).subscribe(
-        () => {
-          this.userFavouritesRates = this.userFavouritesRates.filter((el) => el !== code);
-        }
-      )
-    }
+    this.userService.deleteCurrency(code).subscribe(() => {
+      this.userFavouritesRates = this.userFavouritesRates.filter(
+        (el) => el !== code
+      );
+    });
   }
 
   checkFavourites(ratesWithFlag: RateWithFlag[]) {
-    let jwtToken = this.authService.getToken();
-    if (jwtToken) {
-      this.userService.getUserCurrencies(jwtToken).subscribe(
-        res => {
-          this.userFavouritesRates = res;
-          if (this.userFavouritesRates) {
-            ratesWithFlag.forEach(rateWithFlag => {
-              rateWithFlag.isAddedToFavourite = this.userFavouritesRates.includes(rateWithFlag.rate.code)
-            })
-          }
-        }
-      )
-    }
+    this.userService.getUserCurrencies().subscribe((res) => {
+      this.userFavouritesRates = res;
+      if (this.userFavouritesRates) {
+        ratesWithFlag.forEach((rateWithFlag) => {
+          rateWithFlag.isAddedToFavourite = this.userFavouritesRates.includes(
+            rateWithFlag.rate.code
+          );
+        });
+      }
+    });
   }
 
   checkIfRateIsInFavourites(code: string): boolean {
-    return this.userFavouritesRates.includes(code)
+    return this.userFavouritesRates.includes(code);
   }
 }

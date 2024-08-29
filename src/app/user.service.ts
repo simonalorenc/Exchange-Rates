@@ -2,6 +2,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User, UserToLogin, RegisterUser } from './user';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,7 @@ import { User, UserToLogin, RegisterUser } from './user';
 export class UserService {
   private userServerUrl = 'http://localhost:8080';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   public registerUser(user: User): Observable<RegisterUser> {
     return this.http.post<RegisterUser>(`${this.userServerUrl}/auth/register`, user);
@@ -19,26 +20,26 @@ export class UserService {
     return this.http.post<RegisterUser>(`${this.userServerUrl}/auth/login`, user);
   }
 
-  public getUserCurrencies(token: string): Observable<string[]> {
+  public getUserCurrencies(): Observable<string[]> {
     const headers = new HttpHeaders ({
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${this.authService.getToken()}`
     });
     return this.http.get<string[]>(`${this.userServerUrl}/getUserCurrencies`, { headers });
   }
  
-  public addCurrency(currency: string, token: string): Observable<string> {
+  public addCurrency(currency: string): Observable<string> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${this.authService.getToken()}`
     });
     const body = { currency };
     return this.http.post<string>(`${this.userServerUrl}/addCurrency`, body, { headers });
   }
 
-  public deleteCurrency(currency: string, token: string): Observable<string> {
+  public deleteCurrency(currency: string): Observable<string> {
     const headers = new HttpHeaders({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${this.authService.getToken()}`
     })
     const body = { currency };
     return this.http.delete<string>(`${this.userServerUrl}/deleteCurrency`, { headers, body });
