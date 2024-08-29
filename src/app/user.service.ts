@@ -2,7 +2,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User, UserToLogin, RegisterUser } from './user';
-import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -10,7 +9,7 @@ import { AuthService } from './auth.service';
 export class UserService {
   private userServerUrl = 'http://localhost:8080';
 
-  constructor(private http: HttpClient, private authService: AuthService) { }
+  constructor(private http: HttpClient) { }
 
   public registerUser(user: User): Observable<RegisterUser> {
     return this.http.post<RegisterUser>(`${this.userServerUrl}/auth/register`, user);

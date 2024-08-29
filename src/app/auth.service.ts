@@ -7,13 +7,13 @@ import { BehaviorSubject, Observable } from 'rxjs';
 export class AuthService {
   private JWT_TOKEN_KEY = 'JWTToken';
   private USERNAME_KEY = 'username';
+
   private isLogged = new BehaviorSubject<boolean>(false);
   private username = new BehaviorSubject<string>('');
   private message = new BehaviorSubject<string>('');
 
   constructor() {
     if (this.getToken() !== null) {
-      console.log("isLogged: " + this.isLogged)
       this.isLogged.next(true);
     }
     const storedUsername = this.getUsername();
@@ -48,10 +48,6 @@ export class AuthService {
     return this.message.asObservable();
   }
 
-  public getMessage(): string {
-    return this.message.value;
-  }
-
   public clearMessage(): void {
     this.message.next('');
   }
@@ -76,5 +72,10 @@ export class AuthService {
 
   public usernameObservable(): Observable<string> {
     return this.username.asObservable();
+  }
+
+  public logoutUser(): void {
+    this.removeToken();
+    this.removeUsername();
   }
 }

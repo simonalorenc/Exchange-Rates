@@ -90,8 +90,7 @@ export class NavbarComponent implements OnInit{
   }
 
   public logout(): void {
-    this.authService.removeToken();
-    this.authService.removeUsername();
+    this.authService.logoutUser();
     this.username = '';
     if (this.isLargeScreenWidth = window.innerWidth < 992) {
       this.toggleCollapse();

@@ -15,7 +15,8 @@ import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 import { ViewportScroller } from '@angular/common';
 import { DatesService } from 'src/app/dates.service';
 import { AuthService } from 'src/app/auth.service';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { ModalComponent } from 'src/app/modal/modal.component';
 
 @Component({
   selector: 'app-currency-detail',
@@ -35,7 +36,6 @@ export class CurrencyDetailComponent implements OnInit {
   dates: string[] = [];
   currentPage: number = 1;
   private NUMBER_ITEMS_ON_PAGE: number = 7;
-  modalRef!: BsModalRef;
 
   constructor(
     private route: ActivatedRoute,
@@ -134,7 +134,7 @@ export class CurrencyDetailComponent implements OnInit {
     this.viewportScroller.scrollToAnchor('chartView');
   }
 
-  public heartIconClick(code: string, template: TemplateRef<any>): void {
+  public heartIconClick(code: string): void {
     if (this.isLogged) {
       if (this.isRateInFavourites) {
         this.isRateInFavourites = false
@@ -146,7 +146,12 @@ export class CurrencyDetailComponent implements OnInit {
         this.heartIcon = fasHeart
       }
     } else {
-      this.modalRef = this.modalService.show(template);
+      const options: ModalOptions = {
+        initialState: {
+          message: 'Login to add to favourites!'
+        }
+      }
+      this.modalService.show(ModalComponent, options);
     }
   }
 }

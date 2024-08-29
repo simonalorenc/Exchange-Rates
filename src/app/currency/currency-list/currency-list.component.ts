@@ -1,4 +1,4 @@
-import { Component, Inject, LOCALE_ID, OnDestroy, OnInit, TemplateRef } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CurrenciesRepository } from '../data/currencies-repository';
 import { RateWithFlag } from '../data/rate-with-flag';
@@ -8,9 +8,10 @@ import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CurrencyTranslationService } from '../data/currency.translation.service';
 import { ViewportScroller } from '@angular/common';
 import { AuthService } from 'src/app/auth.service';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { Subscription } from 'rxjs';
 import { FavouritesRatesService } from 'src/app/favourites-rates.service';
+import { ModalComponent } from 'src/app/modal/modal.component';
 
 @Component({
   selector: 'app-currency-list',
@@ -20,7 +21,6 @@ import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 export class CurrencyListComponent implements OnInit, OnDestroy {
   private SORT_KEY: string = 'sortAlphabetically';
   private MESSAGE_TIME: number = 3000;
-  modalRef!: BsModalRef;
 
   private initialRatesWithFlag: RateWithFlag[] = []
   ratesWithFlag: RateWithFlag[] = [];
@@ -33,6 +33,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   isLogged: boolean = false;
   message!: string;
   private isLoggedSubscription!: Subscription;
+  private messageSubscription!: Subscription;
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
@@ -43,7 +44,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     private favouritesRatesService: FavouritesRatesService,
     private authService: AuthService,
     private modalService: BsModalService,
-    @Inject(LOCALE_ID) public locale: string 
+    @Inject(LOCALE_ID) private locale: string 
   ) {
     this.filterForm = this.formBuilder.group({
       filterInputValue: [''],
@@ -51,14 +52,13 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    const sortType = localStorage.getItem(this.SORT_KEY)
     this.isLoggedSubscription = this.authService.isLoggedObservable().subscribe(
       (isLogged) => {
         this.isLogged = isLogged;
         this.getRatesWithFlags();
       }
     )
-    this.authService.messageAsObservable().subscribe(
+    this.messageSubscription = this.authService.messageAsObservable().subscribe(
       (res) => {
         if (res === 'login') {
           this.message = 'Successfully logged in!';
@@ -72,6 +72,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
           }, this.MESSAGE_TIME);
         }
       })
+    const sortType = localStorage.getItem(this.SORT_KEY)
     if(sortType) {
       this.isSortAlphabeticallyActive = JSON.parse(sortType)
     }
@@ -80,6 +81,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.isLoggedSubscription?.unsubscribe();
+    this.messageSubscription?.unsubscribe();
   }
 
   private filterByInputValue(): void {
@@ -154,13 +156,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
     this.viewPortScroller.scrollToPosition([0, 0])
   }
 
-  private openModal(template: TemplateRef<any>) {
-    if (!this.isLogged) {
-      this.modalRef = this.modalService.show(template);
-    }
-  }
-
-  public addToFavourite(code: string, event: Event, template: TemplateRef<any>): void {
+  public addToFavourite(code: string, event: Event): void {
     event.stopPropagation()
     if (this.isLogged) {
       const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
@@ -170,7 +166,12 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
       this.favouritesRatesService.addToFavourites(code)
       this.filterAndSortRatesWithFlags()
     } else {
-      this.modalRef = this.modalService.show(template);
+      const options: ModalOptions = {
+        initialState: {
+          message: 'Login to add to favourites!'
+        }
+      }
+      this.modalService.show(ModalComponent, options);
     }
   }
 

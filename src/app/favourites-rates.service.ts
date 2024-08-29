@@ -17,10 +17,10 @@ export class FavouritesRatesService {
   }
 
   addToFavourites(code: string): void {
-    let jwtToken = this.authService.getToken();
-    if (jwtToken) {
+    let jwtToken = this.authService.getToken();    if (jwtToken) {
       this.userService.addCurrency(code, jwtToken).subscribe(
         () => {
+          
           if (!this.userFavouritesRates) {
             this.userFavouritesRates = [];
           }
