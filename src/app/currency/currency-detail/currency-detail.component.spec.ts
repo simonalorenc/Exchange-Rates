@@ -13,6 +13,7 @@ import { Observable, of } from 'rxjs';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { AuthService } from 'src/app/auth.service';
 import { BsModalService } from 'ngx-bootstrap/modal';
+import { CurrencyExchangeTableDto } from '../data/currency-exchange-table-dto';
 
 describe('CurrencyDetailComponent', () => {
   let component: CurrencyDetailComponent;
@@ -55,7 +56,10 @@ describe('CurrencyDetailComponent', () => {
 
   beforeEach(() => {
     datesServiceSpy.getStartAndEndDate.and.returnValue([])
-    exchangeRateServiceSpy.getCurrencyExchangeTableDtoForDateRange.and.returnValue(of([]))
+    datesServiceSpy.getAllFormattedDatesBetweenRange.and.returnValue([])
+    exchangeRateServiceSpy.getCurrencyExchangeTableDtoForDateRange.and.returnValue(of({
+      rates: []
+    }));
     activatedRouteSpy.snapshot = {
       paramMap: {
         get: (key: string) => 'some-value', // Mocking paramMap
