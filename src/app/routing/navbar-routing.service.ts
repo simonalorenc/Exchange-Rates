@@ -6,12 +6,11 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class NavbarRoutingService {
-  private isCurrenciesActiveSubject = new BehaviorSubject<boolean>(true);
 
   constructor(private router: Router) {}
 
-  onClickCurrencies(): void {
-    this.router.navigate(['/dashboard/currency-list']);
+  onClickCurrencies(message: string): void {
+    this.router.navigate(['/dashboard/currency-list'], {state: {title: message}});
   }
 
   onClickCalculator(): void {

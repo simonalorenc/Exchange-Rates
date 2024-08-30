@@ -2,59 +2,59 @@ import { TestBed } from '@angular/core/testing';
 
 import { FavouritesRatesService } from './favourites-rates.service';
 import { RateWithFlag } from './currency/data/rate-with-flag';
+import { UserService } from './user.service';
+import { AuthService } from './auth.service';
+import { of } from 'rxjs';
 
 describe('FavouritesRatesService', () => {
   let service: FavouritesRatesService;
+  let authServiceSpy = jasmine.createSpyObj('AuthService', ['getToken']);
+  let userServiceSpy = jasmine.createSpyObj('UserService', ['addCurrency', 'deleteCurrency', 'getUserCurrencies'])
 
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(FavouritesRatesService);
-
-    spyOn(localStorage, 'getItem').and.callFake(() => {
-      return JSON.stringify(['eur', 'thb']);
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: AuthService, useValue: authServiceSpy },
+        { provide: UserService, useValue: userServiceSpy }
+      ]
     });
+    service = TestBed.inject(FavouritesRatesService);
+    authServiceSpy = TestBed.inject(AuthService) as jasmine.SpyObj<AuthService>;
+    userServiceSpy = TestBed.inject(UserService) as jasmine.SpyObj<UserService>;
 
-    spyOn(localStorage, 'setItem').and.callThrough();
+    authServiceSpy.getToken.and.returnValue('mock-jwt-token');
+    userServiceSpy.addCurrency.and.returnValue(of(null));
+    userServiceSpy.deleteCurrency.and.returnValue(of(null));
+    userServiceSpy.getUserCurrencies.and.returnValue(of(['eur', 'cad']));
+    service.userFavouritesRates = ['thb'];
+    
   });
 
   it('should add code to favourites', () => {
     const codeToAdd = 'cad';
-
     service.addToFavourites(codeToAdd);
-
-    const expectedStoredRates = JSON.stringify(['eur', 'thb', codeToAdd]);
-    expect(localStorage.getItem).toHaveBeenCalledOnceWith('codes');
-    expect(localStorage.setItem).toHaveBeenCalledOnceWith(
-      'codes',
-      expectedStoredRates
-    );
+    expect(authServiceSpy.getToken).toHaveBeenCalled();
+    expect(userServiceSpy.addCurrency).toHaveBeenCalledWith(codeToAdd, 'mock-jwt-token');
+    userServiceSpy.addCurrency.and.callThrough(); 
   });
 
   it('should remove code from favourites', () => {
     const codeToRemove = 'thb';
-
     service.removeFromFavourites(codeToRemove);
-
-    const expectedStoredRates = JSON.stringify(['eur']);
-    expect(localStorage.setItem).toHaveBeenCalledOnceWith(
-      'codes',
-      expectedStoredRates
-    );
+    expect(authServiceSpy.getToken).toHaveBeenCalled();
+    expect(userServiceSpy.deleteCurrency).toHaveBeenCalledWith(codeToRemove, 'mock-jwt-token');
+    userServiceSpy.deleteCurrency.and.callThrough();
   });
 
   it('should check if code is in favourite and return true', () => {
     const code = 'thb';
-
     const result = service.checkIfRateIsInFavourites(code);
-
     expect(result).toBeTrue();
   });
 
   it('should check if code is in favourite and return false', () => {
     const code = 'pln';
-
     const result = service.checkIfRateIsInFavourites(code);
-
     expect(result).toBeFalse();
   });
 
@@ -78,9 +78,7 @@ describe('FavouritesRatesService', () => {
       false
     );
     const ratesWithFlag: RateWithFlag[] = [eurRateWithFlag, cadRateWithFlag];
-
     service.checkFavourites(ratesWithFlag);
-
     expect(ratesWithFlag[0].isAddedToFavourite).toBeTrue();
     expect(ratesWithFlag[1].isAddedToFavourite).toBeFalse();
   });

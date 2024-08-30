@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
 
 @Component({
@@ -6,24 +6,20 @@ import { NavbarRoutingService } from '../routing/navbar-routing.service';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent {
   isCurrenciesActive: boolean = false
 
   constructor(private navbarRoutingService: NavbarRoutingService) {}
 
-  ngOnInit(): void {
-  
+  public onClickCurrencies(): void {
+    this.navbarRoutingService.onClickCurrencies('')
   }
 
-  onClickCurrencies(): void {
-    this.navbarRoutingService.onClickCurrencies()
-  }
-
-  onClickCalculator(): void {
+  public onClickCalculator(): void {
     this.navbarRoutingService.onClickCalculator()
   }
 
-  onClickGold(): void {
+  public onClickGold(): void {
     this.navbarRoutingService.onClickGold()
   }
 }

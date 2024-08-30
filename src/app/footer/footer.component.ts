@@ -11,8 +11,8 @@ export class FooterComponent {
 
   constructor(private navbarRoutingService: NavbarRoutingService, private viewPortScroller: ViewportScroller) {}
 
-  onClickCurrencies(): void {
-    this.navbarRoutingService.onClickCurrencies()
+  public onClickCurrencies(): void {
+    this.navbarRoutingService.onClickCurrencies('')
     this.viewPortScroller.scrollToPosition([0, 0])
   }
 }

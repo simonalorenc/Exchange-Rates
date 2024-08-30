@@ -22,6 +22,10 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
 import { CurrencyConverterComponent } from './currency/currency-converter/currency-converter.component.component';
 import { CurrencyInputComponent } from './currency-input/currency-input.component';
+import { LogInComponent } from './log-in/log-in.component';
+import { RegisterComponent } from './register/register.component';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { ModalComponent } from './modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -38,6 +42,9 @@ import { CurrencyInputComponent } from './currency-input/currency-input.componen
     ChartFromLastDaysComponent,
     CurrencyConverterComponent,
     CurrencyInputComponent,
+    LogInComponent,
+    RegisterComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,
@@ -48,7 +55,8 @@ import { CurrencyInputComponent } from './currency-input/currency-input.componen
     BrowserAnimationsModule,
     NgChartsModule,
     CollapseModule.forRoot(),
-    FontAwesomeModule
+    FontAwesomeModule,
+    ModalModule.forRoot()
   ],
   providers: [
     {provide : LocationStrategy , useClass: HashLocationStrategy}

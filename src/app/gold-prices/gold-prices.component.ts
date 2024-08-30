@@ -1,19 +1,20 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GoldPriceService } from './data/gold-price.service';
 import { GoldPrice } from './data/gold-price';
 import { DatesService } from '../dates.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-gold-prices',
   templateUrl: './gold-prices.component.html',
   styleUrls: ['./gold-prices.component.scss'],
 })
-export class GoldPricesComponent implements OnInit {
+export class GoldPricesComponent implements OnInit, OnDestroy {
   goldPrices: GoldPrice[] = [];
   dates: string[] = [];
   currentPage: number = 1;
   private NUMBER_ITEMS_ON_PAGE: number = 14
-
+  private goldPricesSubscription!: Subscription;
 
   constructor(private goldPriceService: GoldPriceService, private datesService: DatesService) {
   }
@@ -22,13 +23,17 @@ export class GoldPricesComponent implements OnInit {
     this.getGoldPricesFromLastDays()
   }
 
-  getGoldPricesFromLastDays(): void {
+  ngOnDestroy(): void {
+    this.goldPricesSubscription?.unsubscribe();
+  }
+
+  private getGoldPricesFromLastDays(): void {
     this.dates = this.datesService.getStartAndEndDate(13)
     this.displayGoldPrices()
   }
 
-  displayGoldPrices(): void {
-    this.goldPriceService.getGoldPricesDtoFromRangeTime(this.dates[0], this.dates[1]).subscribe(
+  private displayGoldPrices(): void {
+    this.goldPricesSubscription = this.goldPriceService.getGoldPricesDtoFromRangeTime(this.dates[0], this.dates[1]).subscribe(
       result => {
         const allDates = this.getAllDatesInRange();
         const pricesMap = new Map<string, number>();

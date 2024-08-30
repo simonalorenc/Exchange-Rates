@@ -35,3 +35,10 @@
 .active {
   background-color: $primary-variant;
 }
+
+.alert {
+  width: 300px;
+  top: 60px;
+  z-index: 1;
+  right: 20px;
+}

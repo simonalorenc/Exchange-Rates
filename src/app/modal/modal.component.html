@@ -1,0 +1,10 @@
+<div #template>
+    <div class="modal-body d-flex flex-row justify-content-between">
+      <div class="d-flex align-items-center">
+        {{ message }}
+      </div>
+      <app-button type="button" [icon]="closeIcon" aria-label="Close" (click)="hide()">
+        <span aria-hidden="true">&times;</span>
+      </app-button>
+    </div>
+</div>

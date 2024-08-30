@@ -1,21 +1,26 @@
-import { Component, Inject, LOCALE_ID, OnInit } from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { CurrenciesRepository } from '../data/currencies-repository';
 import { RateWithFlag } from '../data/rate-with-flag';
 import { Router } from '@angular/router';
-import { IconDefinition, faArrowUpAZ, faSort, faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
+import { IconDefinition, faArrowUpAZ, faHeart as fasHeart } from '@fortawesome/free-solid-svg-icons';
 import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CurrencyTranslationService } from '../data/currency.translation.service';
-import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 import { ViewportScroller } from '@angular/common';
+import { AuthService } from 'src/app/auth.service';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { Subject, takeUntil } from 'rxjs';
+import { FavouritesRatesService } from 'src/app/favourites-rates.service';
+import { ModalComponent } from 'src/app/modal/modal.component';
 
 @Component({
   selector: 'app-currency-list',
   templateUrl: './currency-list.component.html',
   styleUrls: ['./currency-list.component.scss'],
 })
-export class CurrencyListComponent implements OnInit {
-  private SORT_KEY: string = 'sortAlphabetically'
+export class CurrencyListComponent implements OnInit, OnDestroy {
+  private SORT_KEY: string = 'sortAlphabetically';
+  private MESSAGE_TIME: number = 3000;
 
   private initialRatesWithFlag: RateWithFlag[] = []
   ratesWithFlag: RateWithFlag[] = [];
@@ -24,7 +29,10 @@ export class CurrencyListComponent implements OnInit {
   sortAlphabeticallyIcon: IconDefinition = faArrowUpAZ;
   emptyHeartIcon: IconDefinition = farHeart;
   fullHeartIcon: IconDefinition = fasHeart;
-  isCollapsed: boolean = true
+  isCollapsed: boolean = true;
+  isLogged: boolean = false;
+  message!: string;
+  private destroy$ = new Subject<void>();;
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
@@ -33,7 +41,9 @@ export class CurrencyListComponent implements OnInit {
     private currencyTranslationService: CurrencyTranslationService,
     private viewPortScroller: ViewportScroller,
     private favouritesRatesService: FavouritesRatesService,
-    @Inject(LOCALE_ID) public locale: string //TODO public?
+    private authService: AuthService,
+    private modalService: BsModalService,
+    @Inject(LOCALE_ID) private locale: string 
   ) {
     this.filterForm = this.formBuilder.group({
       filterInputValue: [''],
@@ -41,16 +51,42 @@ export class CurrencyListComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const title = window.history.state
+    if (title.title === 'login') {
+      this.message = 'Successfully logged in!';
+    } else if ( title.title === 'register') {
+      this.message = 'Successfully registered!';
+    }
+    if (this.message) {
+      setTimeout(() => {
+        this.message = '';
+        window.history.replaceState({}, '', window.location.pathname);
+      }, this.MESSAGE_TIME);
+    }
+    this.authService.isLoggedObservable()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(
+      (isLogged) => {
+        this.isLogged = isLogged;
+        this.getRatesWithFlags();
+      }
+    )
     const sortType = localStorage.getItem(this.SORT_KEY)
     if(sortType) {
       this.isSortAlphabeticallyActive = JSON.parse(sortType)
     }
     this.filterByInputValue()
-    this.getRatesWithFlags();
   }
 
-  private filterByInputValue() {
-    this.filterForm.get('filterInputValue')?.valueChanges.subscribe((value) => {
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private filterByInputValue(): void {
+    this.filterForm.get('filterInputValue')?.valueChanges
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(() => {
       this.filterAndSortRatesWithFlags()
     });
   }
@@ -58,7 +94,9 @@ export class CurrencyListComponent implements OnInit {
   private getRatesWithFlags(): void {
     this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.initialRatesWithFlag = this.currencyTranslationService.getRateWithFlagForLocale(this.locale, rates)
-      this.favouritesRatesService.checkFavourites(this.initialRatesWithFlag)
+      if (this.isLogged) {
+        this.favouritesRatesService.checkFavourites(this.initialRatesWithFlag)
+      }
       this.ratesWithFlag = [...this.initialRatesWithFlag]
       this.sortCurrencies()
     });
@@ -99,7 +137,7 @@ export class CurrencyListComponent implements OnInit {
     }
   }
 
-  setSortType(isSortAlphabetically: boolean): void {
+  public setSortType(isSortAlphabetically: boolean): void {
     this.isSortAlphabeticallyActive = isSortAlphabetically;
     this.setSortingMethod()
     this.toggleCollapse()
@@ -110,32 +148,47 @@ export class CurrencyListComponent implements OnInit {
     localStorage.setItem(this.SORT_KEY, JSON.stringify(this.isSortAlphabeticallyActive))
   }
 
-  toggleCollapse(): void {
+  public toggleCollapse(): void {
     this.isCollapsed = !this.isCollapsed
   }
 
-  navigateToDetail(code: string): void {
+  public navigateToDetail(code: string): void {
     this.router.navigate([`/detail/${code}`]);
     this.viewPortScroller.scrollToPosition([0, 0])
   }
 
-  addToFavourite(code: string, event: Event): void {
+  public addToFavourite(code: string, event: Event): void {
     event.stopPropagation()
-    const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
-    if(foundRate) {
-      foundRate.isAddedToFavourite = true
+    if (this.isLogged) {
+      const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
+      if(foundRate) {
+        foundRate.isAddedToFavourite = true
+      }
+      this.favouritesRatesService.addToFavourites(code)
+      this.filterAndSortRatesWithFlags()
+    } else {
+      const options: ModalOptions = {
+        initialState: {
+          message: 'Login to add to favourites!'
+        }
+      }
+      this.modalService.show(ModalComponent, options);
     }
-    this.favouritesRatesService.addToFavourites(code)
-    this.filterAndSortRatesWithFlags()
   }
 
-  removeFromFavourite(code: string, event: Event): void {
+  public removeFromFavourite(code: string, event: Event): void {
     event.stopPropagation()
-    const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
-    if(foundRate) {
-      foundRate.isAddedToFavourite = false
+    if (this.isLogged) {
+      const foundRate = this.ratesWithFlag.find(rateWithFlag => rateWithFlag.rate.code == code)
+      if(foundRate) {
+        foundRate.isAddedToFavourite = false
+      }
+      this.favouritesRatesService.removeFromFavourites(code)
+      this.filterAndSortRatesWithFlags()
     }
-    this.favouritesRatesService.removeFromFavourites(code)
-    this.filterAndSortRatesWithFlags()
+  }
+
+  public trackByCurrency(index: Number, rateWithFlag: RateWithFlag): string {
+    return rateWithFlag.rate.code
   }
 }
