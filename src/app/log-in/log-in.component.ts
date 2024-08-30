@@ -1,13 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   Validators,
 } from '@angular/forms';
-import { User, UserToLogin } from '../user';
+import { UserToLogin } from '../user';
 import { UserService } from '../user.service';
-import { AuthService } from '../auth.service';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
 import { Subscription } from 'rxjs';
 
@@ -24,7 +22,6 @@ export class LogInComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     private userService: UserService,
-    private authService: AuthService,
     private navbarRoutingService: NavbarRoutingService
   ) {}
 
@@ -50,9 +47,7 @@ export class LogInComponent implements OnInit, OnDestroy {
       };
 
       this.loginSubscription = this.userService.loginUser(user).subscribe(
-        (response) => {
-          this.authService.setToken(response.token);
-          this.authService.setUsername(response.user.firstname);
+        () => {
           this.loginForm.reset();
           this.navbarRoutingService.onClickCurrencies('login');
         },
