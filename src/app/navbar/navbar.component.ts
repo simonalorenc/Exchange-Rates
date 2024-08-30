@@ -1,11 +1,17 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
+import {
+  animate,
+  state,
+  style,
+  transition,
+  trigger,
+} from '@angular/animations';
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { IconDefinition, faBars } from '@fortawesome/free-solid-svg-icons';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
 import { ViewportScroller } from '@angular/common';
 import { AuthService } from '../auth.service';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -13,69 +19,73 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./navbar.component.scss'],
   animations: [
     trigger('transparentBackground', [
-      state('true', style({backgroundColor: 'transparent'})),
-      state('false', style({backgroundColor: '#FFC400'})),
-      transition( '* <=> *', animate(300))
-    ])
-  ]
+      state('true', style({ backgroundColor: 'transparent' })),
+      state('false', style({ backgroundColor: '#FFC400' })),
+      transition('* <=> *', animate(300)),
+    ]),
+  ],
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   private TRANSPARENT_SCROLL_OFFSET: number = 40;
   isUserLogged!: boolean;
-  isTransparent: boolean = true
-  isCurrenciesActive: boolean = false
+  isTransparent: boolean = true;
+  isCurrenciesActive: boolean = false;
   isCollapsed = true;
   username: string = '';
   isLargeScreenWidth!: boolean;
   toggleIcon: IconDefinition = faBars;
-  private loginSubscription! :Subscription;
-  private usernameSubscription! :Subscription;
+  private destroy$ = new Subject<void>();
 
-  constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller, private authService: AuthService
+  constructor(
+    private navbarRoutingService: NavbarRoutingService,
+    private viewportScroller: ViewportScroller,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.loginSubscription = this.authService.isLoggedObservable().subscribe(
-      res => {
+    this.authService
+      .isLoggedObservable()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
         this.isUserLogged = res;
         this.isLargeScreenWidth = window.innerWidth > 992;
-      }
-    )
-    this.usernameSubscription = this.authService.usernameObservable().subscribe(
-      username => {
+      });
+    this.authService
+      .usernameObservable()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((username) => {
         this.username = username;
-      }
-    )
+      });
   }
 
   ngOnDestroy(): void {
-    this.loginSubscription?.unsubscribe();
-    this.usernameSubscription?.unsubscribe();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   @HostListener('window: scroll', ['$event'])
   private onScroll(event: Event): void {
-    if(!this.isCollapsed) return
+    if (!this.isCollapsed) return;
     this.isTransparent = this.isTransparentScrollOffset();
   }
 
   @HostListener('window:resize', ['$event'])
   onResize(event: Event) {
     if (window.innerWidth > 992) {
-      this.isLargeScreenWidth = true
+      this.isLargeScreenWidth = true;
     } else {
       this.isLargeScreenWidth = false;
     }
   }
 
   public toggleCollapse(): void {
-    this.isCollapsed = !this.isCollapsed
-    if(this.isCollapsed) {
-      this.toggleIcon = faBars
+    this.isCollapsed = !this.isCollapsed;
+    if (this.isCollapsed) {
+      this.toggleIcon = faBars;
     } else {
-      this.toggleIcon = faXmark
+      this.toggleIcon = faXmark;
     }
-    this.isTransparent = this.isCollapsed && this.isTransparentScrollOffset()
+    this.isTransparent = this.isCollapsed && this.isTransparentScrollOffset();
   }
 
   private isTransparentScrollOffset(): boolean {
@@ -84,23 +94,22 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   public onClickCurrencies(): void {
     this.navbarRoutingService.onClickCurrencies('');
-    this.viewportScroller.scrollToPosition([0,0]);
+    this.viewportScroller.scrollToPosition([0, 0]);
   }
 
   public onClickCalculator(): void {
     this.navbarRoutingService.onClickCalculator();
-    this.viewportScroller.scrollToPosition([0,0]);
+    this.viewportScroller.scrollToPosition([0, 0]);
   }
 
   public onClickGold(): void {
     this.navbarRoutingService.onClickGold();
-    this.viewportScroller.scrollToPosition([0,0]);
+    this.viewportScroller.scrollToPosition([0, 0]);
   }
 
   public logout(): void {
     this.authService.logoutUser();
-    this.username = '';
-    if (this.isLargeScreenWidth = window.innerWidth < 992) {
+    if ((this.isLargeScreenWidth = window.innerWidth < 992)) {
       this.toggleCollapse();
     }
   }

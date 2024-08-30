@@ -14,7 +14,6 @@ import { Subscription } from 'rxjs';
 })
 export class RegisterComponent implements OnInit, OnDestroy {
   registerForm!: FormGroup;
-  user: User = { firstname: '', lastname: '', email: '', password: '', currencies: [] };
   error: string = '';
   private registerSubscription!: Subscription;
   
@@ -38,9 +37,15 @@ export class RegisterComponent implements OnInit, OnDestroy {
   }
 
   public onSubmit(): void {
-    this.saveUserData();
     if (this.registerForm.valid) {
-      this.registerSubscription = this.userService.registerUser(this.user).subscribe(
+      const user: User = {
+        firstname: this.registerForm.get('firstname')?.value, 
+        lastname: this.registerForm.get('lastname')?.value, 
+        email: this.registerForm.get('e-mail')?.value, 
+        password: this.registerForm.get('password')?.value, 
+        currencies: [] 
+      }
+      this.registerSubscription = this.userService.registerUser(user).subscribe(
         response => {
           this.authService.setToken(response.token);
           this.authService.setUsername(response.user.firstname);
@@ -59,12 +64,5 @@ export class RegisterComponent implements OnInit, OnDestroy {
     } else {
       this.registerForm.markAllAsTouched();
     }
-  }
-
-  private saveUserData() {
-    this.user.firstname = this.registerForm.get('firstname')?.value;
-    this.user.lastname = this.registerForm.get('lastname')?.value;
-    this.user.email = this.registerForm.get('e-mail')?.value;
-    this.user.password = this.registerForm.get('password')?.value;
   }
 }

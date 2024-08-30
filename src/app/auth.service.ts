@@ -30,7 +30,7 @@ export class AuthService {
     return localStorage.getItem(this.JWT_TOKEN_KEY);
   }
 
-  public removeToken() {
+  private removeToken() {
     localStorage.removeItem(this.JWT_TOKEN_KEY);
     this.isLogged.next(false);
   }
@@ -44,7 +44,7 @@ export class AuthService {
     return localStorage.getItem(this.USERNAME_KEY);
   }
 
-  public removeUsername() {
+  private removeUsername() {
     localStorage.removeItem(this.USERNAME_KEY);
     this.username.next('');
   }

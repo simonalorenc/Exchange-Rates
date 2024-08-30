@@ -17,9 +17,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./log-in.component.scss'],
 })
 export class LogInComponent implements OnInit, OnDestroy {
-  isUserLogged: boolean = false;
   loginForm!: FormGroup;
-  user: UserToLogin = { email: '', password: '' };
   error: string = '';
   private loginSubscription!: Subscription;
 
@@ -45,9 +43,13 @@ export class LogInComponent implements OnInit, OnDestroy {
   }
 
   public onSubmit(): void {
-    this.saveUserData();
     if (this.loginForm.valid) {
-      this.loginSubscription = this.userService.loginUser(this.user).subscribe(
+      const user: UserToLogin = { 
+        email: this.loginForm.get('e-mail')?.value, 
+        password: this.loginForm.get('password')?.value 
+      };
+
+      this.loginSubscription = this.userService.loginUser(user).subscribe(
         (response) => {
           this.authService.setToken(response.token);
           this.authService.setUsername(response.user.firstname);
@@ -69,10 +71,5 @@ export class LogInComponent implements OnInit, OnDestroy {
     } else {
       this.loginForm.markAllAsTouched();
     }
-  }
-
-  private saveUserData() {
-    this.user.email = this.loginForm.get('e-mail')?.value;
-    this.user.password = this.loginForm.get('password')?.value;
   }
 }
