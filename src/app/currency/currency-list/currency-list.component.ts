@@ -9,7 +9,7 @@ import { CurrencyTranslationService } from '../data/currency.translation.service
 import { ViewportScroller } from '@angular/common';
 import { AuthService } from 'src/app/auth.service';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { Subject, Subscription, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 import { ModalComponent } from 'src/app/modal/modal.component';
 
@@ -32,8 +32,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   isCollapsed: boolean = true;
   isLogged: boolean = false;
   message!: string;
-  private isLoggedSubscription!: Subscription;
-  private filterInput$ = new Subject<void>();;
+  private destroy$ = new Subject<void>();;
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
@@ -64,7 +63,9 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
         window.history.replaceState({}, '', window.location.pathname);
       }, this.MESSAGE_TIME);
     }
-    this.isLoggedSubscription = this.authService.isLoggedObservable().subscribe(
+    this.authService.isLoggedObservable()
+    .pipe(takeUntil(this.destroy$))
+    .subscribe(
       (isLogged) => {
         this.isLogged = isLogged;
         this.getRatesWithFlags();
@@ -78,14 +79,13 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.isLoggedSubscription?.unsubscribe();
-    this.filterInput$.next();
-    this.filterInput$.complete();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private filterByInputValue(): void {
     this.filterForm.get('filterInputValue')?.valueChanges
-    .pipe(takeUntil(this.filterInput$))
+    .pipe(takeUntil(this.destroy$))
     .subscribe(() => {
       this.filterAndSortRatesWithFlags()
     });

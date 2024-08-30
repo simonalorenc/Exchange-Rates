@@ -1,26 +1,27 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { CurrenciesRepository } from '../data/currencies-repository';
 import { RateWithFlag } from '../data/rate-with-flag';
 import { IconDefinition, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-currency-converter',
   templateUrl: './currency-converter.component.html',
   styleUrls: ['./currency-converter.component.scss']
 })
-export class CurrencyConverterComponent implements OnInit {
+export class CurrencyConverterComponent implements OnInit, OnDestroy {
+  private FROM_RATE_CODE: string = 'EUR'
+  private TO_RATE_CODE: string = 'USD'
+  private INIT_FROM_VALUE: number = 1
+  
   fromCurrencyInputData!: CurrencyInputData 
   toCurrencyInputData!: CurrencyInputData
 
   ratesWithFlag: RateWithFlag[] = []
   initFromRateWithFlag!: RateWithFlag
   initToRateWithFlag!: RateWithFlag
-
-  private FROM_RATE_CODE: string = 'EUR'
-  private TO_RATE_CODE: string = 'USD'
-  private INIT_FROM_VALUE: number = 1
-
   arrowIcon: IconDefinition = faArrowRight
+  private currenciesSubscription!: Subscription;
 
   constructor(
     private currenciesRepository: CurrenciesRepository
@@ -31,8 +32,12 @@ export class CurrencyConverterComponent implements OnInit {
     this.getRatesWithFlags()
   }
 
+  ngOnDestroy(): void {
+    this.currenciesSubscription?.unsubscribe();
+  }
+
   private getRatesWithFlags(): void {
-    this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
+    this.currenciesSubscription = this.currenciesRepository.getRatesWithFlags().subscribe((rates) => {
       this.ratesWithFlag = rates
       this.initFromRateWithFlag = rates.find((rate) => {
         return rate.rate.code === this.FROM_RATE_CODE

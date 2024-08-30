@@ -22,11 +22,11 @@ export class ChartFromLastDaysComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.parent?.paramMap
-    .pipe(takeUntil(this.chart$))
-    .subscribe((params) => {
-      const code = params.get('code') || '';
-      this.createChartFromLastDays(code);
-    });
+      .pipe(takeUntil(this.chart$))
+      .subscribe((params) => {
+        const code = params.get('code') || '';
+        this.createChartFromLastDays(code);
+      });
   }
 
   ngOnDestroy(): void {

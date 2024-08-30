@@ -1,10 +1,4 @@
-import {
-  Component,
-  Inject,
-  LOCALE_ID,
-  OnDestroy,
-  OnInit,
-} from '@angular/core';
+import { Component, Inject, LOCALE_ID, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CurrencyRate } from '../data/currency-exchange-table-dto';
 import { ExchangeRateService } from '../data/exchange-rate.service';
@@ -23,7 +17,7 @@ import { DatesService } from 'src/app/dates.service';
 import { AuthService } from 'src/app/auth.service';
 import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
 import { ModalComponent } from 'src/app/modal/modal.component';
-import { Subscription } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-currency-detail',
@@ -43,8 +37,7 @@ export class CurrencyDetailComponent implements OnInit, OnDestroy {
   dates: string[] = [];
   currentPage: number = 1;
   private NUMBER_ITEMS_ON_PAGE: number = 7;
-  isLoggedSubscription!: Subscription;
-  currencyDtoSubscription!: Subscription;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private route: ActivatedRoute,
@@ -61,8 +54,9 @@ export class CurrencyDetailComponent implements OnInit, OnDestroy {
     private modalService: BsModalService
   ) {
     this.code = this.route.snapshot.paramMap.get('code')!;
-    this.isLoggedSubscription = this.authService
+    this.authService
       .isLoggedObservable()
+      .pipe(takeUntil(this.destroy$))
       .subscribe((res) => (this.isLogged = res));
   }
 
@@ -77,8 +71,8 @@ export class CurrencyDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.isLoggedSubscription?.unsubscribe;
-    this.currencyDtoSubscription?.unsubscribe;
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private getCurrencyDetailsAndFlagUrl(): void {
@@ -91,12 +85,13 @@ export class CurrencyDetailComponent implements OnInit, OnDestroy {
   }
 
   private displayExchangeRates() {
-    this.currencyDtoSubscription = this.exchangeRateService
+    this.exchangeRateService
       .getCurrencyExchangeTableDtoForDateRange(
         this.code,
         this.dates[0],
         this.dates[1]
       )
+      .pipe(takeUntil(this.destroy$))
       .subscribe((currencyResult) => {
         this.name = this.currencyTranslationService.updateDetailCurrency(
           this.locale,

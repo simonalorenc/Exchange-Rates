@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -9,17 +9,19 @@ import { User, UserToLogin } from '../user';
 import { UserService } from '../user.service';
 import { AuthService } from '../auth.service';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-log-in',
   templateUrl: './log-in.component.html',
   styleUrls: ['./log-in.component.scss'],
 })
-export class LogInComponent implements OnInit {
+export class LogInComponent implements OnInit, OnDestroy {
   isUserLogged: boolean = false;
   loginForm!: FormGroup;
   user: UserToLogin = { email: '', password: '' };
   error: string = '';
+  private loginSubscription!: Subscription;
 
   constructor(
     private fb: FormBuilder,
@@ -31,7 +33,6 @@ export class LogInComponent implements OnInit {
   ngOnInit(): void {
     this.initializeForm();
   }
-
   private initializeForm() {
     this.loginForm = this.fb.group({
       'e-mail': ['', [Validators.required, Validators.email]],
@@ -39,10 +40,14 @@ export class LogInComponent implements OnInit {
     });
   }
 
+  ngOnDestroy(): void {
+    this.loginSubscription?.unsubscribe();
+  }
+
   public onSubmit(): void {
     this.saveUserData();
     if (this.loginForm.valid) {
-      this.userService.loginUser(this.user).subscribe(
+      this.loginSubscription = this.userService.loginUser(this.user).subscribe(
         (response) => {
           this.authService.setToken(response.token);
           this.authService.setUsername(response.user.firstname);

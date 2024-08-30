@@ -1,25 +1,31 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../user.service';
 import { User } from '../user';
 import { AuthService } from '../auth.service';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
 import { FavouritesRatesService } from '../favourites-rates.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
   styleUrls: ['./register.component.scss']
 })
-export class RegisterComponent implements OnInit{
+export class RegisterComponent implements OnInit, OnDestroy {
   registerForm!: FormGroup;
   user: User = { firstname: '', lastname: '', email: '', password: '', currencies: [] };
   error: string = '';
+  private registerSubscription!: Subscription;
   
   constructor(private fb: FormBuilder, private userService: UserService, private authService: AuthService, private navbarRoutingService: NavbarRoutingService, private favouritesRatesService: FavouritesRatesService) {}
 
   ngOnInit(): void {
     this.initializeForm();
+  }
+
+  ngOnDestroy(): void {
+    this.registerSubscription?.unsubscribe();
   }
 
   private initializeForm() {
@@ -34,7 +40,7 @@ export class RegisterComponent implements OnInit{
   public onSubmit(): void {
     this.saveUserData();
     if (this.registerForm.valid) {
-      this.userService.registerUser(this.user).subscribe(
+      this.registerSubscription = this.userService.registerUser(this.user).subscribe(
         response => {
           this.authService.setToken(response.token);
           this.authService.setUsername(response.user.firstname);

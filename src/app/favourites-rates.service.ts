@@ -1,58 +1,69 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { RateWithFlag } from './currency/data/rate-with-flag';
-import { AuthService } from './auth.service';
 import { UserService } from './user.service';
-import { map, Observable } from 'rxjs';
+import { map, Observable, Subject, takeUntil } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class FavouritesRatesService {
+export class FavouritesRatesService implements OnDestroy {
   userFavouritesRates!: string[];
+  private destroy$ = new Subject<void>();
 
-  constructor(
-    private authService: AuthService,
-    private userService: UserService
-  ) {}
+  constructor(private userService: UserService) {}
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 
   initializeFavouritesAfterRegister(): void {
     this.userFavouritesRates = [];
   }
 
   addToFavourites(code: string): void {
-    this.userService.addCurrency(code).subscribe(() => {
-      if (!this.userFavouritesRates) {
-        this.userFavouritesRates = [];
-      }
-      this.userFavouritesRates.push(code);
-      console.log(this.userFavouritesRates);
-    });
+    this.userService
+      .addCurrency(code)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        if (!this.userFavouritesRates) {
+          this.userFavouritesRates = [];
+        }
+        this.userFavouritesRates.push(code);
+        console.log(this.userFavouritesRates);
+      });
   }
 
   removeFromFavourites(code: string): void {
-    this.userService.deleteCurrency(code).subscribe(() => {
-      this.userFavouritesRates = this.userFavouritesRates.filter(
-        (el) => el !== code
-      );
-    });
+    this.userService
+      .deleteCurrency(code)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.userFavouritesRates = this.userFavouritesRates.filter(
+          (el) => el !== code
+        );
+      });
   }
 
   checkFavourites(ratesWithFlag: RateWithFlag[]) {
-    this.userService.getUserCurrencies().subscribe((res) => {
-      this.userFavouritesRates = res;
-      if (this.userFavouritesRates) {
-        ratesWithFlag.forEach((rateWithFlag) => {
-          rateWithFlag.isAddedToFavourite = this.userFavouritesRates.includes(
-            rateWithFlag.rate.code
-          );
-        });
-      }
-    });
+    this.userService
+      .getUserCurrencies()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((res) => {
+        this.userFavouritesRates = res;
+        if (this.userFavouritesRates) {
+          ratesWithFlag.forEach((rateWithFlag) => {
+            rateWithFlag.isAddedToFavourite = this.userFavouritesRates.includes(
+              rateWithFlag.rate.code
+            );
+          });
+        }
+      });
   }
 
   checkIfRateIsInFavourites(code: string): Observable<boolean> {
     return this.userService.getUserCurrencies().pipe(
-      map(res => {
+      map((res) => {
         this.userFavouritesRates = res;
         return this.userFavouritesRates.includes(code);
       })

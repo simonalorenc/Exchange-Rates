@@ -6,7 +6,6 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class NavbarRoutingService {
-  private isCurrenciesActiveSubject = new BehaviorSubject<boolean>(true);
 
   constructor(private router: Router) {}
 

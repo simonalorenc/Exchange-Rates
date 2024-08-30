@@ -1,10 +1,11 @@
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { IconDefinition, faBars } from '@fortawesome/free-solid-svg-icons';
 import { faXmark } from '@fortawesome/free-solid-svg-icons';
 import { NavbarRoutingService } from '../routing/navbar-routing.service';
 import { ViewportScroller } from '@angular/common';
 import { AuthService } from '../auth.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
@@ -18,7 +19,7 @@ import { AuthService } from '../auth.service';
     ])
   ]
 })
-export class NavbarComponent implements OnInit{
+export class NavbarComponent implements OnInit, OnDestroy {
   private TRANSPARENT_SCROLL_OFFSET: number = 40;
   isUserLogged!: boolean;
   isTransparent: boolean = true
@@ -27,22 +28,29 @@ export class NavbarComponent implements OnInit{
   username: string = '';
   isLargeScreenWidth!: boolean;
   toggleIcon: IconDefinition = faBars;
+  private loginSubscription! :Subscription;
+  private usernameSubscription! :Subscription;
 
   constructor(private navbarRoutingService: NavbarRoutingService, private viewportScroller: ViewportScroller, private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.authService.isLoggedObservable().subscribe(
+    this.loginSubscription = this.authService.isLoggedObservable().subscribe(
       res => {
         this.isUserLogged = res;
         this.isLargeScreenWidth = window.innerWidth > 992;
       }
     )
-    this.authService.usernameObservable().subscribe(
+    this.usernameSubscription = this.authService.usernameObservable().subscribe(
       username => {
         this.username = username;
       }
     )
+  }
+
+  ngOnDestroy(): void {
+    this.loginSubscription?.unsubscribe();
+    this.usernameSubscription?.unsubscribe();
   }
 
   @HostListener('window: scroll', ['$event'])
