@@ -37,11 +37,10 @@ export class RegisterComponent implements OnInit{
       this.userService.registerUser(this.user).subscribe(
         response => {
           this.authService.setToken(response.token);
-          this.authService.setRegisterMessage();
           this.authService.setUsername(response.user.firstname);
           this.favouritesRatesService.initializeFavouritesAfterRegister();
           this.registerForm.reset();
-          this.navbarRoutingService.onClickCurrencies();
+          this.navbarRoutingService.onClickCurrencies('register');
         },
         err => {
           if (err.status === 0) {

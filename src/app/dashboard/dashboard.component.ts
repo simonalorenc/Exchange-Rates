@@ -12,7 +12,7 @@ export class DashboardComponent {
   constructor(private navbarRoutingService: NavbarRoutingService) {}
 
   public onClickCurrencies(): void {
-    this.navbarRoutingService.onClickCurrencies()
+    this.navbarRoutingService.onClickCurrencies('')
   }
 
   public onClickCalculator(): void {

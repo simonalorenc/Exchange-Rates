@@ -8,8 +8,8 @@ import { faHeart as farHeart } from '@fortawesome/free-regular-svg-icons';
 import { CurrencyTranslationService } from '../data/currency.translation.service';
 import { ViewportScroller } from '@angular/common';
 import { AuthService } from 'src/app/auth.service';
-import { BsModalRef, BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
-import { Subscription } from 'rxjs';
+import { BsModalService, ModalOptions } from 'ngx-bootstrap/modal';
+import { Subject, Subscription, takeUntil } from 'rxjs';
 import { FavouritesRatesService } from 'src/app/favourites-rates.service';
 import { ModalComponent } from 'src/app/modal/modal.component';
 
@@ -33,7 +33,7 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   isLogged: boolean = false;
   message!: string;
   private isLoggedSubscription!: Subscription;
-  private messageSubscription!: Subscription;
+  private filterInput$ = new Subject<void>();;
 
   constructor(
     private currenciesRepository: CurrenciesRepository,
@@ -52,26 +52,24 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
+    const title = window.history.state
+    if (title.title === 'login') {
+      this.message = 'Successfully logged in!';
+    } else if ( title.title === 'register') {
+      this.message = 'Successfully registered!';
+    }
+    if (this.message) {
+      setTimeout(() => {
+        this.message = '';
+        window.history.replaceState({}, '', window.location.pathname);
+      }, this.MESSAGE_TIME);
+    }
     this.isLoggedSubscription = this.authService.isLoggedObservable().subscribe(
       (isLogged) => {
         this.isLogged = isLogged;
         this.getRatesWithFlags();
       }
     )
-    this.messageSubscription = this.authService.messageAsObservable().subscribe(
-      (res) => {
-        if (res === 'login') {
-          this.message = 'Successfully logged in!';
-        } else if ( res === 'register') {
-          this.message = 'Successfully registered!';
-        }
-        if (this.message) {
-          setTimeout(() => {
-            this.authService.clearMessage();
-            this.message = '';
-          }, this.MESSAGE_TIME);
-        }
-      })
     const sortType = localStorage.getItem(this.SORT_KEY)
     if(sortType) {
       this.isSortAlphabeticallyActive = JSON.parse(sortType)
@@ -81,11 +79,14 @@ export class CurrencyListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.isLoggedSubscription?.unsubscribe();
-    this.messageSubscription?.unsubscribe();
+    this.filterInput$.next();
+    this.filterInput$.complete();
   }
 
   private filterByInputValue(): void {
-    this.filterForm.get('filterInputValue')?.valueChanges.subscribe((value) => {
+    this.filterForm.get('filterInputValue')?.valueChanges
+    .pipe(takeUntil(this.filterInput$))
+    .subscribe(() => {
       this.filterAndSortRatesWithFlags()
     });
   }

@@ -10,7 +10,6 @@ export class AuthService {
 
   private isLogged = new BehaviorSubject<boolean>(false);
   private username = new BehaviorSubject<string>('');
-  private message = new BehaviorSubject<string>('');
 
   constructor() {
     if (this.getToken() !== null) {
@@ -34,22 +33,6 @@ export class AuthService {
   public removeToken() {
     localStorage.removeItem(this.JWT_TOKEN_KEY);
     this.isLogged.next(false);
-  }
-
-  public setLoginMessage(): void {
-    this.message.next('login');
-  }
-
-  public setRegisterMessage(): void {
-    this.message.next('register');
-  }
-
-  public messageAsObservable(): Observable<string> {
-    return this.message.asObservable();
-  }
-
-  public clearMessage(): void {
-    this.message.next('');
   }
 
   public setUsername(name: string): void {

@@ -75,7 +75,7 @@ export class NavbarComponent implements OnInit{
   }
 
   public onClickCurrencies(): void {
-    this.navbarRoutingService.onClickCurrencies();
+    this.navbarRoutingService.onClickCurrencies('');
     this.viewportScroller.scrollToPosition([0,0]);
   }
 

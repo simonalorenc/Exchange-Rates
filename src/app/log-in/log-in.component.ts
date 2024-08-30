@@ -45,10 +45,9 @@ export class LogInComponent implements OnInit {
       this.userService.loginUser(this.user).subscribe(
         (response) => {
           this.authService.setToken(response.token);
-          this.authService.setLoginMessage();
           this.authService.setUsername(response.user.firstname);
           this.loginForm.reset();
-          this.navbarRoutingService.onClickCurrencies();
+          this.navbarRoutingService.onClickCurrencies('login');
         },
         (err) => {
           if (

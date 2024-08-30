@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { RateWithFlag } from './currency/data/rate-with-flag';
 import { AuthService } from './auth.service';
 import { UserService } from './user.service';
+import { map, Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +25,7 @@ export class FavouritesRatesService {
         this.userFavouritesRates = [];
       }
       this.userFavouritesRates.push(code);
+      console.log(this.userFavouritesRates);
     });
   }
 
@@ -48,7 +50,12 @@ export class FavouritesRatesService {
     });
   }
 
-  checkIfRateIsInFavourites(code: string): boolean {
-    return this.userFavouritesRates.includes(code);
+  checkIfRateIsInFavourites(code: string): Observable<boolean> {
+    return this.userService.getUserCurrencies().pipe(
+      map(res => {
+        this.userFavouritesRates = res;
+        return this.userFavouritesRates.includes(code);
+      })
+    );
   }
 }

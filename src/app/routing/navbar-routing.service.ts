@@ -10,8 +10,8 @@ export class NavbarRoutingService {
 
   constructor(private router: Router) {}
 
-  onClickCurrencies(): void {
-    this.router.navigate(['/dashboard/currency-list']);
+  onClickCurrencies(message: string): void {
+    this.router.navigate(['/dashboard/currency-list'], {state: {title: message}});
   }
 
   onClickCalculator(): void {
