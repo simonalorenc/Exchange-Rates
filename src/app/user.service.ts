@@ -8,7 +8,7 @@ import { AuthService } from './auth.service';
   providedIn: 'root'
 })
 export class UserService {
-  private userServerUrl = 'http://localhost:8080';
+  private userServerUrl = 'https://exchange-rates-backend.onrender.com';
 
   constructor(private http: HttpClient, private authService: AuthService) { }
 
