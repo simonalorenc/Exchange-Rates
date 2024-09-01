@@ -30,7 +30,6 @@ export class FavouritesRatesService implements OnDestroy {
           this.userFavouritesRates = [];
         }
         this.userFavouritesRates.push(code);
-        console.log(this.userFavouritesRates);
       });
   }
 
