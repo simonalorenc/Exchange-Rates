@@ -15,7 +15,7 @@ Tech stack:
 
 ## Live
 
-[Exchange-rate-app](https://simona-lorenc-currencies.netlify.app/#/dashboard/currency-list)
+[Exchange-rate-app](https://exchanges-rates.netlify.app/#/dashboard/currency-list)
 
 ## Some screenshots:
 
